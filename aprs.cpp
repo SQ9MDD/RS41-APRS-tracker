@@ -41,14 +41,6 @@ void calcDMH(long x, int8_t* degrees, uint8_t* minutes, uint8_t* h_minutes) {
   }
 }
 
-void aprs_test(){
-  char packet_buffer[128];
-  sprintf(packet_buffer,
-          (":TEST1234567890")
-  );
-  qaprs.sendData(packet_buffer);
-}
-
 void aprs_send_status_ok(){
 	char packet_buffer[30];
 	sprintf(packet_buffer,">FIX OK");
@@ -99,30 +91,10 @@ void aprs_send_position(GPSEntry gpsData) {
           altitude,
           APRS_COMMENT,
           sats);
-  qaprs.sendData(packet_buffer);
+	  qaprs.sendData(packet_buffer);
 	  //qaprs.sendData(gpsData.speed_raw);
 }
 
 void aprs_change_tone_time(uint16_t x) {
   qaprs._toneSendTime = x;
-}
-
-void t(){
-//  // nadanie paketu typu komentarz
-//  packet_buffer = ":TEST TEST TEST de SQ5RWU";
-//  // zmiana adresu źródłowego i ssida
-//  QAPRS.setFromAddress("SQ5R", '1');
-//  QAPRS.sendData(packet_buffer);
-//  // nadanie pakietu z pozycja i symbolem wahadlowca
-//  packet_buffer = "!5215.68N/02057.48ES#";
-//  // zmiana adresu źródłowego, ssida i ścieżki
-//  QAPRS.setFromAddress("SQ5RWU", '2');
-//  QAPRS.setRelays("WIDE2-2");
-//  QAPRS.sendData(packet_buffer);
-//  // nadanie danych pogodowych bez pozycji
-//  packet_buffer = "_07071805c025s009g008t030r000p000P000h00b10218";
-//  // zmiana ścieżki
-//  QAPRS.setRelays("WIDE1-1");
-//  QAPRS.sendData(packet_buffer);
-//  delay(5000);
 }

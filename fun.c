@@ -33,8 +33,6 @@ void send_hex(unsigned char data) {
   #endif
 }
 
-
-
 uint16_t gps_CRC16_checksum(char *string) {
   uint16_t crc = 0xffff;
   char i;

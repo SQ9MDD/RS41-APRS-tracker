@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <misc.h>
-//#include "f_rtty.h"
 #include "init.h"
 #include "config.h"
 #include "radio.h"
@@ -73,62 +72,7 @@ void TIM2_IRQHandler(void) {
     if (aprs_is_active()){
       aprs_timer_handler();
     }
-//    } else {
-//      if (tx_on) {
-//        send_rtty_status = send_rtty((char *) rtty_buf);
-//        if (!disable_armed){
-//          if (send_rtty_status == rttyEnd) {
-//            GPIO_SetBits(GPIOB, RED);
-//            if (*(++rtty_buf) == 0) {
-//              tx_on = 0;
-//              tx_on_delay = tx_delay / (1000/RTTY_SPEED);
-//              tx_enable = 0;
-//              radio_disable_tx();
-//            }
-//          } else if (send_rtty_status == rttyOne) {
-//            radio_rw_register(0x73, 0x02, 1);
-//            GPIO_SetBits(GPIOB, RED);
-//          } else if (send_rtty_status == rttyZero) {
-//            radio_rw_register(0x73, 0x00, 1);
-//            GPIO_ResetBits(GPIOB, RED);
-//          }
-//        }
-//      }
-//      if (!tx_on && --tx_on_delay == 0) {
-//        tx_enable = 1;
-//        tx_on_delay--;
-//      }
-//      if (--cun == 0) {
-//        if (pun) {
-//          GPIO_ResetBits(GPIOB, GREEN);
-//          pun = 0;
-//        } else {
-//          if (flaga & 0x80) {
-//            GPIO_SetBits(GPIOB, GREEN);
-//          }
-//          pun = 1;
-//        }
-//        cun = 200;
-//      }
-//      if (ALLOW_DISABLE_BY_BUTTON){
-//        if (ADCVal[1] > 1900){
-//          button_pressed++;
-//          if (button_pressed > (5 * RTTY_SPEED)){
-//            disable_armed = 1;
-//            GPIO_SetBits(GPIOB, RED);
-//            GPIO_SetBits(GPIOB, GREEN);
-//          }
-//        } else {
-//          if (disable_armed){
-//            GPIO_SetBits(GPIOA, GPIO_Pin_12);
-//          }
-//          button_pressed = 0;
-//        }
-//      }
-//    }
-
   }
-
 }
 
 int main(void) {
@@ -158,15 +102,10 @@ int main(void) {
   radio_rw_register(0x13, 0x00, 1);
   radio_rw_register(0x12, 0x00, 1);
   radio_rw_register(0x0f, 0x80, 1);
-//  rtty_buf = buf_rtty;
   tx_on = 0;
   tx_enable = 1;
 
   aprs_init();
-  //radio_enable_tx();
-
-  //uint8_t rtty_before_aprs_left = RTTY_TO_APRS_RATIO;
-
   while (1) {
     if (tx_on == 0 && tx_enable) {
 
@@ -176,7 +115,7 @@ int main(void) {
         GPSEntry gpsData;
         ublox_get_last_data(&gpsData);
         USART_Cmd(USART1, DISABLE);
-        //_delay_ms(200);
+
         //tutaj zlecamy wysylka ramki
         if(gpsData.sats_raw < 4){
         	aprs_send_status();
@@ -190,49 +129,12 @@ int main(void) {
         }
         USART_Cmd(USART1, ENABLE);
         radio_disable_tx();
- //     }
-
     } else {
       NVIC_SystemLPConfig(NVIC_LP_SEVONPEND, DISABLE);
       __WFI();
     }
   }
 }
-
-//void send_rtty_packet() {
-//  start_bits = RTTY_PRE_START_BITS;
-//  int8_t si4032_temperature = radio_read_temperature();
-//
-////  voltage = srednia(ADCVal[0] * 600 / 4096);
-//  voltage = ADCVal[0] * 600 / 4096;
-//  GPSEntry gpsData;
-//  ublox_get_last_data(&gpsData);
-//  if (gpsData.fix >= 3) {
-//        flaga |= 0x80;
-//      } else {
-//        flaga &= ~0x80;
-//      }
-//  uint8_t lat_d = (uint8_t) abs(gpsData.lat_raw / 10000000);
-//  uint32_t lat_fl = (uint32_t) abs(abs(gpsData.lat_raw) - lat_d * 10000000) / 100;
-//  uint8_t lon_d = (uint8_t) abs(gpsData.lon_raw / 10000000);
-//  uint32_t lon_fl = (uint32_t) abs(abs(gpsData.lon_raw) - lon_d * 10000000) / 100;
-//
-//  sprintf(buf_rtty, "$$$$%s,%d,%02u%02u%02u,%s%d.%05ld,%s%d.%05ld,%ld,%d,%d,%d,%02x", callsign, send_cun,
-//              gpsData.hours, gpsData.minutes, gpsData.seconds,
-//              gpsData.lat_raw < 0 ? "-" : "", lat_d, lat_fl,
-//              gpsData.lon_raw < 0 ? "-" : "", lon_d, lon_fl,
-//              (gpsData.alt_raw / 1000), si4032_temperature, voltage, gpsData.sats_raw,
-//              flaga);
-//  CRC_rtty = 0xffff;                 //possibly not neccessary??
-//  CRC_rtty = gps_CRC16_checksum(buf_rtty + 4);
-//  sprintf(buf_rtty, "%s*%04X\n", buf_rtty, CRC_rtty & 0xffff);
-//  //rtty_buf = buf_rtty;
-//  //radio_enable_tx();
-//  //tx_on = 1;
-//
-//  send_cun++;
-//}
-
 
 #ifdef  DEBUG
 void assert_failed(uint8_t* file, uint32_t line)
