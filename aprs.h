@@ -16,6 +16,7 @@ extern "C" {
   void aprs_timer_handler();
   uint8_t aprs_is_active();
   void aprs_send_status();
+  void aprs_send_status_ok();
   void aprs_send_position(GPSEntry gpsData);
   void aprs_change_tone_time(uint16_t x);
   void aprs_test();

@@ -42,6 +42,7 @@ volatile unsigned int cun = 10;
 volatile unsigned char tx_on = 0;
 volatile unsigned int tx_on_delay;
 volatile unsigned char tx_enable = 0;
+volatile unsigned int stat_sended = 0;
 //rttyStates send_rtty_status = rttyZero;
 //volatile char *rtty_buf;
 volatile uint16_t button_pressed = 0;
@@ -177,9 +178,14 @@ int main(void) {
         USART_Cmd(USART1, DISABLE);
         //_delay_ms(200);
         //tutaj zlecamy wysylka ramki
-        if(gpsData.sats_raw < 3){
+        if(gpsData.sats_raw < 4){
         	aprs_send_status();
+        	stat_sended = 1;
         }else{
+        	if(stat_sended == 1){
+        		aprs_send_status_ok();
+        		stat_sended = 0;
+        	}
         	aprs_send_position(gpsData);
         }
         USART_Cmd(USART1, ENABLE);

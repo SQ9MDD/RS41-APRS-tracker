@@ -49,9 +49,15 @@ void aprs_test(){
   qaprs.sendData(packet_buffer);
 }
 
+void aprs_send_status_ok(){
+	char packet_buffer[30];
+	sprintf(packet_buffer,">FIX OK");
+	qaprs.sendData(packet_buffer);
+}
+
 void aprs_send_status(){
-	char packet_buffer[128];
-	sprintf(packet_buffer,">WAITING FOR FIX");
+	char packet_buffer[30];
+	sprintf(packet_buffer,">NO FIX");
 	qaprs.sendData(packet_buffer);
 }
 
@@ -79,11 +85,15 @@ void aprs_send_position(GPSEntry gpsData) {
   //}
 
 	  sprintf(packet_buffer,
-          ("!%02d%02d.%02u%c%s%03d%02u.%02u%c%s%s%s%s%s"),
-		  abs(la_degrees), la_minutes, la_h_minutes,
+          ("!%02d%02d.%02u%c%s%03d%02u.%02u%c%s%s%s%s"),
+		  abs(la_degrees),
+		  la_minutes,
+		  la_h_minutes,
           la_degrees > 0 ? 'N' : 'S',
           APRS_TABL,
-          abs(lo_degrees), lo_minutes, lo_h_minutes,
+          abs(lo_degrees),
+          lo_minutes,
+          lo_h_minutes,
           lo_degrees > 0 ? 'E' : 'W',
           APRS_ICON,
           altitude,

@@ -3,18 +3,18 @@
 // Modified by SQ9MDD on 2019.05.09
 //
 //**************config**********************
-#define APRS_CALLSIGN 	"N0LIC" 			// put your APRS callsign here, 6 characters. If your callsign is shorter add spaces
-#define APRS_SSID 		'7' 				// put your APRS SSID here allowed numbers are from 0-F (SSID 0-15)
-#define APRS_TABL 		"/"					// icon table look at: http://www.aprs.org/symbols/symbolsX.txt
-#define APRS_ICON		"["					// icon symbol
-#define APRS_PATH		"WIDE2-1"			// APRS DIGI PATH
-#define APRS_COMMENT 	"Testy trakera"		// comment
-#define APRS_SEND_ALT	0					// enable/disable sending altitude
-#define APRS_SEND_SAT	0					// enable/disable sending SAT condition
-#define APRS_SEND_SPD	0					// course and speed
-#define APRS_INTERVAL	180					// number of seconds between packets, DO NOT SETUP LESS THAN 60s
-#define APRS_FREQUENCY  432.500f 			// Mhz middle frequency usually 432.500MHz
-#define TX_POWER  		0 					// PWR 0...7 0- MIN ... 7 - MAX
+#define APRS_CALLSIGN 	"N0LIC" 				// put your APRS callsign here, 6 characters. If your callsign is shorter add spaces
+#define APRS_SSID 		'7' 					// put your APRS SSID here allowed numbers are from 0-F (SSID 0-15)
+#define APRS_TABL 		"/"						// icon table look at: http://www.aprs.org/symbols/symbolsX.txt
+#define APRS_ICON		"["						// icon symbol
+#define APRS_PATH		"WIDE2-1"				// APRS DIGI PATH
+#define APRS_COMMENT 	"Testy trakera"			// comment
+#define APRS_SEND_ALT	0						// enable/disable sending altitude
+#define APRS_SEND_SAT	0						// enable/disable sending SAT condition
+#define APRS_SEND_SPD	0						// course and speed
+#define APRS_INTERVAL	180						// number of seconds between packets, DO NOT SETUP LESS THAN 60s
+#define APRS_FREQUENCY  432.500f 				// Mhz middle frequency usually 432.500MHz
+#define TX_POWER  		0 						// PWR 0...7 0- MIN ... 7 - MAX
 
 // !!!!! PLEASE FOLLOW THE RULES !!!!!
 
