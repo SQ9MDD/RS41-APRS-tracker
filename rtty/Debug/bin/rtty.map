@@ -255,8 +255,8 @@ Discarded input sections
  .debug_aranges
                 0x00000000       0x40 ..\obj\fun.o
  .debug_ranges  0x00000000       0x30 ..\obj\fun.o
- .debug_line    0x00000000      0x1e8 ..\obj\fun.o
- .debug_str     0x00000000      0x1e4 ..\obj\fun.o
+ .debug_line    0x00000000      0x20c ..\obj\fun.o
+ .debug_str     0x00000000      0x1f6 ..\obj\fun.o
  .comment       0x00000000       0x6f ..\obj\fun.o
  .debug_frame   0x00000000       0x6c ..\obj\fun.o
  .ARM.attributes
@@ -277,8 +277,8 @@ Discarded input sections
  .debug_aranges
                 0x00000000       0x28 ..\obj\system_stm32f10x.o
  .debug_ranges  0x00000000       0x38 ..\obj\system_stm32f10x.o
- .debug_line    0x00000000      0x201 ..\obj\system_stm32f10x.o
- .debug_str     0x00000000      0x2e3 ..\obj\system_stm32f10x.o
+ .debug_line    0x00000000      0x225 ..\obj\system_stm32f10x.o
+ .debug_str     0x00000000      0x2f5 ..\obj\system_stm32f10x.o
  .comment       0x00000000       0x6f ..\obj\system_stm32f10x.o
  .debug_frame   0x00000000       0x48 ..\obj\system_stm32f10x.o
  .ARM.attributes
@@ -310,8 +310,8 @@ Discarded input sections
  .debug_aranges
                 0x00000000       0x60 ..\obj\stm32f10x_pwr.o
  .debug_ranges  0x00000000       0x50 ..\obj\stm32f10x_pwr.o
- .debug_line    0x00000000      0x2cc ..\obj\stm32f10x_pwr.o
- .debug_str     0x00000000      0x342 ..\obj\stm32f10x_pwr.o
+ .debug_line    0x00000000      0x314 ..\obj\stm32f10x_pwr.o
+ .debug_str     0x00000000      0x354 ..\obj\stm32f10x_pwr.o
  .comment       0x00000000       0x6f ..\obj\stm32f10x_pwr.o
  .debug_frame   0x00000000       0xb8 ..\obj\stm32f10x_pwr.o
  .ARM.attributes
@@ -561,8 +561,8 @@ Discarded input sections
  .debug_aranges
                 0x00000000       0x20 ..\obj\f_rtty.o
  .debug_ranges  0x00000000       0x10 ..\obj\f_rtty.o
- .debug_line    0x00000000      0x158 ..\obj\f_rtty.o
- .debug_str     0x00000000      0x1a1 ..\obj\f_rtty.o
+ .debug_line    0x00000000      0x16a ..\obj\f_rtty.o
+ .debug_str     0x00000000      0x1b3 ..\obj\f_rtty.o
  .comment       0x00000000       0x6f ..\obj\f_rtty.o
  .debug_frame   0x00000000       0x48 ..\obj\f_rtty.o
  .ARM.attributes
@@ -1731,63 +1731,63 @@ OUTPUT(rtty.elf elf32-littlearm)
  .debug_ranges  0x00001900       0xc0 ..\obj\stm32f10x_spi.o
  .debug_ranges  0x000019c0      0x490 ..\obj\QAPRSBase.o
 
-.debug_line     0x00000000     0x534b
- .debug_line    0x00000000      0x26f ..\obj\delay.o
- .debug_line    0x0000026f      0xd0c ..\obj\stm32f10x_tim.o
- .debug_line    0x00000f7b       0x9a ..\obj\startup_stm32f10x_md_vl.o
- .debug_line    0x00001015      0x4d2 ..\obj\stm32f10x_gpio.o
- .debug_line    0x000014e7      0x2d6 ..\obj\main.o
- .debug_line    0x000017bd      0x557 ..\obj\ublox.o
- .debug_line    0x00001d14      0x4c4 ..\obj\init.o
- .debug_line    0x000021d8      0x313 ..\obj\aprs.o
- .debug_line    0x000024eb      0x4fc ..\obj\stm32f10x_rcc.o
- .debug_line    0x000029e7      0x32b ..\obj\radio.o
- .debug_line    0x00002d12      0x559 ..\obj\stm32f10x_adc.o
- .debug_line    0x0000326b      0x4ce ..\obj\stm32f10x_usart.o
- .debug_line    0x00003739      0x1cd ..\obj\syscalls.o
- .debug_line    0x00003906      0x86e ..\obj\stm32f10x_flash.o
- .debug_line    0x00004174      0x2f7 ..\obj\stm32f10x_dma.o
- .debug_line    0x0000446b      0x25d ..\obj\misc.o
- .debug_line    0x000046c8      0x43e ..\obj\stm32f10x_spi.o
- .debug_line    0x00004b06      0x845 ..\obj\QAPRSBase.o
+.debug_line     0x00000000     0x57b9
+ .debug_line    0x00000000      0x2b7 ..\obj\delay.o
+ .debug_line    0x000002b7      0xd54 ..\obj\stm32f10x_tim.o
+ .debug_line    0x0000100b       0xac ..\obj\startup_stm32f10x_md_vl.o
+ .debug_line    0x000010b7      0x51a ..\obj\stm32f10x_gpio.o
+ .debug_line    0x000015d1      0x31e ..\obj\main.o
+ .debug_line    0x000018ef      0x59f ..\obj\ublox.o
+ .debug_line    0x00001e8e      0x50c ..\obj\init.o
+ .debug_line    0x0000239a      0x325 ..\obj\aprs.o
+ .debug_line    0x000026bf      0x544 ..\obj\stm32f10x_rcc.o
+ .debug_line    0x00002c03      0x373 ..\obj\radio.o
+ .debug_line    0x00002f76      0x5a1 ..\obj\stm32f10x_adc.o
+ .debug_line    0x00003517      0x516 ..\obj\stm32f10x_usart.o
+ .debug_line    0x00003a2d      0x1df ..\obj\syscalls.o
+ .debug_line    0x00003c0c      0x8b6 ..\obj\stm32f10x_flash.o
+ .debug_line    0x000044c2      0x33f ..\obj\stm32f10x_dma.o
+ .debug_line    0x00004801      0x2a5 ..\obj\misc.o
+ .debug_line    0x00004aa6      0x486 ..\obj\stm32f10x_spi.o
+ .debug_line    0x00004f2c      0x88d ..\obj\QAPRSBase.o
 
-.debug_str      0x00000000     0x416f
- .debug_str     0x00000000      0x6d4 ..\obj\delay.o
-                                0x741 (size before relaxing)
- .debug_str     0x000006d4      0xa14 ..\obj\stm32f10x_tim.o
-                                0xdf9 (size before relaxing)
- .debug_str     0x000010e8       0xc0 ..\obj\startup_stm32f10x_md_vl.o
-                                0x157 (size before relaxing)
- .debug_str     0x000011a8      0x372 ..\obj\stm32f10x_gpio.o
-                                0x539 (size before relaxing)
- .debug_str     0x0000151a      0x2f6 ..\obj\main.o
-                                0x60a (size before relaxing)
- .debug_str     0x00001810      0x4b9 ..\obj\ublox.o
-                                0x7b0 (size before relaxing)
- .debug_str     0x00001cc9      0x652 ..\obj\init.o
-                                0xea6 (size before relaxing)
- .debug_str     0x0000231b      0x840 ..\obj\aprs.o
-                                0xa4e (size before relaxing)
- .debug_str     0x00002b5b      0x377 ..\obj\stm32f10x_rcc.o
-                                0x676 (size before relaxing)
- .debug_str     0x00002ed2       0xd7 ..\obj\radio.o
-                                0x397 (size before relaxing)
- .debug_str     0x00002fa9      0x3be ..\obj\stm32f10x_adc.o
-                                0x71b (size before relaxing)
- .debug_str     0x00003367      0x320 ..\obj\stm32f10x_usart.o
-                                0x6d9 (size before relaxing)
- .debug_str     0x00003687      0x179 ..\obj\syscalls.o
-                                0x329 (size before relaxing)
- .debug_str     0x00003800      0x3b4 ..\obj\stm32f10x_flash.o
-                                0x5aa (size before relaxing)
- .debug_str     0x00003bb4       0xfa ..\obj\stm32f10x_dma.o
-                                0x38b (size before relaxing)
- .debug_str     0x00003cae      0x144 ..\obj\misc.o
-                                0x3c7 (size before relaxing)
- .debug_str     0x00003df2      0x24e ..\obj\stm32f10x_spi.o
-                                0x646 (size before relaxing)
- .debug_str     0x00004040      0x12f ..\obj\QAPRSBase.o
-                                0xb9c (size before relaxing)
+.debug_str      0x00000000     0x42c5
+ .debug_str     0x00000000      0x6e6 ..\obj\delay.o
+                                0x753 (size before relaxing)
+ .debug_str     0x000006e6      0xa26 ..\obj\stm32f10x_tim.o
+                                0xe0b (size before relaxing)
+ .debug_str     0x0000110c       0xd2 ..\obj\startup_stm32f10x_md_vl.o
+                                0x169 (size before relaxing)
+ .debug_str     0x000011de      0x384 ..\obj\stm32f10x_gpio.o
+                                0x54b (size before relaxing)
+ .debug_str     0x00001562      0x31a ..\obj\main.o
+                                0x62e (size before relaxing)
+ .debug_str     0x0000187c      0x4cb ..\obj\ublox.o
+                                0x7c2 (size before relaxing)
+ .debug_str     0x00001d47      0x664 ..\obj\init.o
+                                0xeb8 (size before relaxing)
+ .debug_str     0x000023ab      0x852 ..\obj\aprs.o
+                                0xa72 (size before relaxing)
+ .debug_str     0x00002bfd      0x389 ..\obj\stm32f10x_rcc.o
+                                0x688 (size before relaxing)
+ .debug_str     0x00002f86       0xe9 ..\obj\radio.o
+                                0x3a9 (size before relaxing)
+ .debug_str     0x0000306f      0x3d0 ..\obj\stm32f10x_adc.o
+                                0x72d (size before relaxing)
+ .debug_str     0x0000343f      0x332 ..\obj\stm32f10x_usart.o
+                                0x6eb (size before relaxing)
+ .debug_str     0x00003771      0x18b ..\obj\syscalls.o
+                                0x34d (size before relaxing)
+ .debug_str     0x000038fc      0x3c6 ..\obj\stm32f10x_flash.o
+                                0x5bc (size before relaxing)
+ .debug_str     0x00003cc2      0x10c ..\obj\stm32f10x_dma.o
+                                0x39d (size before relaxing)
+ .debug_str     0x00003dce      0x156 ..\obj\misc.o
+                                0x3d9 (size before relaxing)
+ .debug_str     0x00003f24      0x260 ..\obj\stm32f10x_spi.o
+                                0x658 (size before relaxing)
+ .debug_str     0x00004184      0x141 ..\obj\QAPRSBase.o
+                                0xbae (size before relaxing)
 
 .comment        0x00000000       0x6e
  .comment       0x00000000       0x6e ..\obj\delay.o

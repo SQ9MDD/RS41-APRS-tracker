@@ -21,6 +21,7 @@ Have a nice day ;)
  * 07.01.2017 - GPS now using proprietiary UBLOX protocol, more elastic code to set working frequency by SQ5RWU
  * 23.01.2017 - Test APRS code, small fixes in GPS code by SQ5RWU
  * 06.06.2017 - APRS code fix, some code cleanup
+ * 09.06.2019 - Dirty Removing RTTY, moving APRS settings to the config
 
 
 #TODO
