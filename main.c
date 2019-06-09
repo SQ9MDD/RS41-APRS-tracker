@@ -110,6 +110,9 @@ int main(void) {
     if (tx_on == 0 && tx_enable) {
 
         _delay_ms((APRS_INTERVAL*1000)-1000);
+
+        GPIO_SetBits(GPIOB, GREEN);
+        GPIO_ResetBits(GPIOB, RED);
         radio_enable_tx();
 
         GPSEntry gpsData;
@@ -129,6 +132,8 @@ int main(void) {
         }
         USART_Cmd(USART1, ENABLE);
         radio_disable_tx();
+        GPIO_SetBits(GPIOB, RED);
+        GPIO_ResetBits(GPIOB, GREEN);
     } else {
       NVIC_SystemLPConfig(NVIC_LP_SEVONPEND, DISABLE);
       __WFI();
