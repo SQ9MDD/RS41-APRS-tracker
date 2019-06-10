@@ -173,6 +173,7 @@ void ublox_handle_packet(uBloxPacket *pkt) {
       currentGPSData.seconds = pkt->data.navpvt.sec;
       currentGPSData.sats_raw = pkt->data.navpvt.numSV;
       currentGPSData.speed_raw = pkt->data.navpvt.gSpeed;
+      currentGPSData.heading_raw=pkt->data.navpvt.headVeh; // /1e5 deg
 
     } else if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x02){
       currentGPSData.ok_packets += 1;
@@ -182,7 +183,11 @@ void ublox_handle_packet(uBloxPacket *pkt) {
     } else if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x06){
       currentGPSData.fix = pkt->data.navsol.gpsFix;
       currentGPSData.sats_raw = pkt->data.navsol.numSV;
-    } else if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x21){
+    } else if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x12){//NAV-VELNED
+      currentGPSData.speed_raw=pkt->data.navvelned.gSpeed; //cm/s
+      currentGPSData.vspeed_raw=pkt->data.navvelned.velD; //cm/s
+      currentGPSData.heading_raw=pkt->data.navvelned.heading; // /1e5 deg
+    }else if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x21){
       currentGPSData.hours = pkt->data.navtimeutc.hour;
       currentGPSData.minutes = pkt->data.navtimeutc.min;
       currentGPSData.seconds = pkt->data.navtimeutc.sec;

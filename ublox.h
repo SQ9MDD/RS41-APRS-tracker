@@ -11,6 +11,8 @@ typedef struct {
   int32_t lon_raw;
   int32_t alt_raw;
   int32_t speed_raw;
+  int32_t vspeed_raw;
+  int32_t heading_raw;
   uint8_t sats_raw;
   uint8_t seconds;
   uint8_t minutes;
@@ -157,6 +159,19 @@ typedef struct {
 } uBloxCFGRSTPayload;
 
 typedef struct {
+  uint32_t iTOW;		//GPS Millisecond Time of Week [- ms]
+  int32_t velN;
+  int32_t velE;
+  int32_t velD;
+  uint32_t speed; //3d
+  uint32_t gSpeed;
+  int32_t heading;
+  uint32_t sAcc;
+  uint32_t cAcc;
+
+} uBloxNAVVELNEDPayload;
+
+typedef struct {
   uint16_t mask;		//Parameters Bitmask. Only the masked parameters will be applied. (see graphic below) [- -]
   uint8_t dynModel;		//Dynamic Platform model: - 0 􀀀 Portable - 2 􀀀 Stationary - 3 􀀀 Pedestrian - 4 􀀀 Automotive - 5 􀀀 Sea - 6 􀀀 Airborne with <1g Acceleration - 7 􀀀 Airborne with <2g Acceleration - 8 􀀀 Airborne with <4g Acceleration [- -]
   uint8_t fixMode;		//Position Fixing Mode. - 1: 2D only - 2: 3D only - 3: Auto 2D/3D [- -]
@@ -191,6 +206,7 @@ typedef union {
   uBloxACKACKayload ackack;
   uBloxCFGRSTPayload cfgrst;
   uBloxCFGRXMPayload cfgrxm;
+  uBloxNAVVELNEDPayload navvelned;
 } ubloxPacketData;
 
 typedef struct __attribute__((packed)){
