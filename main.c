@@ -113,7 +113,10 @@ int main(void) {
         if(predkosc < APRS_SB_LOW_SPEED){
         	flexible_delay = APRS_SB_LOW_RATE;
         } else if(predkosc > APRS_SB_LOW_SPEED && predkosc < APRS_SB_FAST_SPEED){
-
+        	// return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+        	// in  = APRS_SB_LOW_SPEED, APRS_SB_FAST_SPEED
+        	// out = APRS_SB_LOW_RATE, APRS_SB_FAST_RATE
+        	flexible_delay = (predkosc - APRS_SB_LOW_SPEED) * (APRS_SB_FAST_SPEED - APRS_SB_LOW_SPEED) / (APRS_SB_FAST_SPEED - APRS_SB_LOW_SPEED) + APRS_SB_LOW_RATE;
         } else if(predkosc > APRS_SB_FAST_SPEED){
         	flexible_delay = APRS_SB_FAST_RATE;
         }
