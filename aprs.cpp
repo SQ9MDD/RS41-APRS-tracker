@@ -133,7 +133,7 @@ void aprs_send_position(GPSEntry gpsData) {
   	          APRS_TACTICAL_ICON,
   	          csespd,
   	          altitude,
-  	          APRS_COMMENT,
+  	          APRS_TACTICAL_COMMENT,
   	          sats);
   	  }
 
