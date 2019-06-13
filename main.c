@@ -21,9 +21,7 @@
 #include "aprs.h"
 ///////////////////////////// test mode /////////////
 static __IO uint32_t DelayCounter;
-const unsigned char test = 0; // 0 - normal, 1 - short frame only cunter, height, flag
-//char callsign[15] = {CALLSIGN};
-
+//const unsigned char test = 0; // 0 - normal, 1 - short frame only cunter, height, flag
 
 #define GREEN  GPIO_Pin_7
 #define RED  GPIO_Pin_8
@@ -42,14 +40,9 @@ volatile unsigned char tx_on = 0;
 volatile unsigned int tx_on_delay;
 volatile unsigned char tx_enable = 0;
 volatile unsigned int stat_sended = 0;
-//rttyStates send_rtty_status = rttyZero;
-//volatile char *rtty_buf;
 volatile uint16_t button_pressed = 0;
 volatile uint8_t disable_armed = 0;
-
-void send_rtty_packet();
-uint16_t gps_CRC16_checksum (char *string);
-// int srednia (int dana);
+volatile unsigned int flexible_delay = 60;
 
 
 /**
@@ -76,14 +69,10 @@ void TIM2_IRQHandler(void) {
 }
 
 int main(void) {
-#ifdef DEBUG
-  debug();
-#endif
   RCC_Conf();
   NVIC_Conf();
   init_port();
 
-  //init_timer(RTTY_SPEED);
   delay_init();
   ublox_init();
 
@@ -109,18 +98,35 @@ int main(void) {
   while (1) {
     if (tx_on == 0 && tx_enable) {
 
-        _delay_ms((APRS_INTERVAL*1000)-1000);
-
-        GPIO_SetBits(GPIOB, GREEN);
-        GPIO_ResetBits(GPIOB, RED);
-        radio_enable_tx();
-
+    	if(APRS_SMARTBIKON == 0){
+    		_delay_ms((APRS_INTERVAL*1000)-1000);
+    	}
+    	else{
+    		_delay_ms((flexible_delay*1000)-1000);
+    	}
         GPSEntry gpsData;
         ublox_get_last_data(&gpsData);
         USART_Cmd(USART1, DISABLE);
 
+        // cos ala smart bikon liczony na podstawie predkosci trzeba to przepisac jakos poprawnie
+        int predkosc = (gpsData.speed_raw)*0.036;
+        if(predkosc < APRS_SB_LOW_SPEED){
+        	flexible_delay = APRS_SB_LOW_RATE;
+        } else if(predkosc > APRS_SB_LOW_SPEED && predkosc < APRS_SB_FAST_SPEED){
+
+        } else if(predkosc > APRS_SB_FAST_SPEED){
+        	flexible_delay = APRS_SB_FAST_RATE;
+        }
+
+
+        GPIO_SetBits(GPIOB, GREEN);
+        GPIO_ResetBits(GPIOB, RED);
+        if(ENABLE_TX == 1){
+        	radio_enable_tx();
+        }
+
         //tutaj zlecamy wysylka ramki
-        if(gpsData.sats_raw < 4){
+        if(gpsData.fix < 3){
         	aprs_send_status();
         	stat_sended = 1;
         }else{
@@ -130,8 +136,10 @@ int main(void) {
         	}
         	aprs_send_position(gpsData);
         }
+        if(ENABLE_TX == 1){
+        	radio_disable_tx();
+        }
         USART_Cmd(USART1, ENABLE);
-        radio_disable_tx();
         GPIO_SetBits(GPIOB, RED);
         GPIO_ResetBits(GPIOB, GREEN);
     } else {
@@ -140,10 +148,3 @@ int main(void) {
     }
   }
 }
-
-#ifdef  DEBUG
-void assert_failed(uint8_t* file, uint32_t line)
-{
-    while (1);
-}
-#endif

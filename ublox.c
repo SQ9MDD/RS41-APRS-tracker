@@ -99,21 +99,26 @@ void ublox_init(){
   } while (!ublox_wait_for_ack());
 
   uBloxPacket msgcfgmsg = {.header = {0xb5, 0x62, .messageClass=0x06, .messageId=0x01, .payloadSize=sizeof(uBloxCFGMSGPayload)},
-    .data.cfgmsg = {.msgClass=0x01, .msgID=0x02, .rate=1}};
+    .data.cfgmsg = {.msgClass=0x01, .msgID=0x02, .rate=2}};
 
   do {
     send_ublox_packet(&msgcfgmsg);
   } while (!ublox_wait_for_ack());
+
+  msgcfgmsg.data.cfgmsg.msgID = 0x12;
+   do {
+     send_ublox_packet(&msgcfgmsg);
+   } while (!ublox_wait_for_ack());
 
   msgcfgmsg.data.cfgmsg.msgID = 0x6;
   do {
     send_ublox_packet(&msgcfgmsg);
   } while (!ublox_wait_for_ack());
 
-  msgcfgmsg.data.cfgmsg.msgID = 0x21;
-  do {
-    send_ublox_packet(&msgcfgmsg);
-  } while (!ublox_wait_for_ack());
+//  msgcfgmsg.data.cfgmsg.msgID = 0x21;
+//  do {
+//    send_ublox_packet(&msgcfgmsg);
+//  } while (!ublox_wait_for_ack());
 
   uBloxPacket msgcfgnav5 = {.header = {0xb5, 0x62, .messageClass=0x06, .messageId=0x24, .payloadSize=sizeof(uBloxCFGNAV5Payload)},
     .data.cfgnav5={.mask=0b00000001111111111, .dynModel=7, .fixMode=2, .fixedAlt=0, .fixedAltVar=10000, .minElev=5, .drLimit=0, .pDop=25, .tDop=25,
@@ -162,20 +167,7 @@ void ublox_handle_packet(uBloxPacket *pkt) {
     currentGPSData.bad_packets += 1;
   } else {
 
-    if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x07){
-      currentGPSData.ok_packets += 1;
-      currentGPSData.fix = pkt->data.navpvt.fixType;
-      currentGPSData.lat_raw = pkt->data.navpvt.lat;
-      currentGPSData.lon_raw = pkt->data.navpvt.lon;
-      currentGPSData.alt_raw = pkt->data.navpvt.hMSL;
-      currentGPSData.hours = pkt->data.navpvt.hour;
-      currentGPSData.minutes = pkt->data.navpvt.min;
-      currentGPSData.seconds = pkt->data.navpvt.sec;
-      currentGPSData.sats_raw = pkt->data.navpvt.numSV;
-      currentGPSData.speed_raw = pkt->data.navpvt.gSpeed;
-      currentGPSData.heading_raw=pkt->data.navpvt.headVeh; // /1e5 deg
-
-    } else if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x02){
+    if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x02){
       currentGPSData.ok_packets += 1;
       currentGPSData.lat_raw = pkt->data.navposllh.lat;
       currentGPSData.lon_raw = pkt->data.navposllh.lon;
@@ -183,18 +175,19 @@ void ublox_handle_packet(uBloxPacket *pkt) {
     } else if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x06){
       currentGPSData.fix = pkt->data.navsol.gpsFix;
       currentGPSData.sats_raw = pkt->data.navsol.numSV;
-    } else if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x12){//NAV-VELNED
-      currentGPSData.speed_raw=pkt->data.navvelned.gSpeed; //cm/s
-      currentGPSData.vspeed_raw=pkt->data.navvelned.velD; //cm/s
-      currentGPSData.heading_raw=pkt->data.navvelned.heading; // /1e5 deg
-    }else if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x21){
-      currentGPSData.hours = pkt->data.navtimeutc.hour;
-      currentGPSData.minutes = pkt->data.navtimeutc.min;
-      currentGPSData.seconds = pkt->data.navtimeutc.sec;
-    } else if (pkt->header.messageClass == 0x05 && pkt->header.messageId == 0x01){
+    }
+//    else if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x21){
+//      currentGPSData.hours = pkt->data.navtimeutc.hour;
+//      currentGPSData.minutes = pkt->data.navtimeutc.min;
+//      currentGPSData.seconds = pkt->data.navtimeutc.sec;
+//    }
+    else if (pkt->header.messageClass == 0x05 && pkt->header.messageId == 0x01){
       ack_received = 1;
     } else if (pkt->header.messageClass == 0x05 && pkt->header.messageId == 0x00){
       nack_received = 1;
+    } else if(pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x012){
+    	currentGPSData.course = pkt->data.navvelned.cAcc;
+    	currentGPSData.speed_raw = pkt->data.navvelned.speed;
     }
   }
 

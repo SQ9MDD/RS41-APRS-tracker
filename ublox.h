@@ -11,8 +11,6 @@ typedef struct {
   int32_t lon_raw;
   int32_t alt_raw;
   int32_t speed_raw;
-  int32_t vspeed_raw;
-  int32_t heading_raw;
   uint8_t sats_raw;
   uint8_t seconds;
   uint8_t minutes;
@@ -20,6 +18,7 @@ typedef struct {
   uint8_t fix;
   uint16_t ok_packets;
   uint16_t bad_packets;
+  uint32_t course;
 } GPSEntry;
 
 typedef struct  __attribute__((packed)){
@@ -100,6 +99,7 @@ typedef struct {
 
 } uBloxNAVSOLPayload;
 
+
 typedef struct {
   uint32_t iTOW;		//GPS Millisecond Time of Week [- ms]
   uint32_t tAcc;		//Time Accuracy Estimate [- ns]
@@ -159,19 +159,6 @@ typedef struct {
 } uBloxCFGRSTPayload;
 
 typedef struct {
-  uint32_t iTOW;		//GPS Millisecond Time of Week [- ms]
-  int32_t velN;
-  int32_t velE;
-  int32_t velD;
-  uint32_t speed; //3d
-  uint32_t gSpeed;
-  int32_t heading;
-  uint32_t sAcc;
-  uint32_t cAcc;
-
-} uBloxNAVVELNEDPayload;
-
-typedef struct {
   uint16_t mask;		//Parameters Bitmask. Only the masked parameters will be applied. (see graphic below) [- -]
   uint8_t dynModel;		//Dynamic Platform model: - 0 􀀀 Portable - 2 􀀀 Stationary - 3 􀀀 Pedestrian - 4 􀀀 Automotive - 5 􀀀 Sea - 6 􀀀 Airborne with <1g Acceleration - 7 􀀀 Airborne with <2g Acceleration - 8 􀀀 Airborne with <4g Acceleration [- -]
   uint8_t fixMode;		//Position Fixing Mode. - 1: 2D only - 2: 3D only - 3: Auto 2D/3D [- -]
@@ -194,6 +181,18 @@ typedef struct {
   uint8_t reserved1;		//Always set to 8 [- -]
   uint8_t lpMode;		//Low Power Mode 0: Max. performance mode 1: Power Save Mode (>= FW 6.00 only) 2-3: reserved 4: Eco mode 5-255: reserved [- -]
 } uBloxCFGRXMPayload;
+
+typedef struct {
+ uint32_t	iTOW;
+ int32_t    velN;
+ int32_t    velE;
+ int32_t    velD;
+ uint32_t	speed;
+ uint32_t	gSpeed;
+ int32_t	heading;
+ uint32_t	sAcc;
+ uint32_t   cAcc;
+}uBloxNAVVELNEDPayload;
 
 typedef union {
   uBloxNAVPVTPayload navpvt;

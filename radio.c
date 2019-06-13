@@ -46,10 +46,10 @@ void radio_enable_tx() {
   radio_rw_register(0x07, 0x48, 1);
 }
 
-int8_t radio_read_temperature() {
-  uint8_t temp;
-  temp = radio_rw_register(0x11, 0xff, 0); // read ADC
-  int8_t temperatura = (int8_t) (-64 + (temp * 5 / 10) - 16);
-  radio_rw_register(0x0f, 0x80, 1);
-  return temperatura;
-}
+//int8_t radio_read_temperature() {
+//  uint8_t temp;
+//  temp = radio_rw_register(0x11, 0xff, 0); // read ADC
+//  int8_t temperatura = (int8_t) (-64 + (temp * 5 / 10) - 16);
+//  radio_rw_register(0x0f, 0x80, 1);
+//  return temperatura;
+//}

@@ -1,6 +1,6 @@
 //
 // Created by Admin on 2017-01-09.
-//
+// troche tutaj narobilem balaganu 2019-06-11 SQ9MDD
 
 #include "aprs.h"
 #include "QAPRSBase.h"
@@ -81,18 +81,25 @@ void aprs_send_position(GPSEntry gpsData) {
   	}
   }
 
+  //redukcja sciezki po przekroczeniu granicznej wysokosci
+  if(APRS_ALT_REDUCE_PATH == 1 && (gpsData.alt_raw/1000) >= APRS_ALT_LIMIT){
+	  qaprs.init(0, 0, (char *) APRS_CALLSIGN, (const uint8_t) APRS_SSID, (char *) "APZQAP", '0', (char *) "");
+  }
+
   if(APRS_SEND_ALT == 1){
 	  sprintf(altitude,"/A=%06ld",(gpsData.alt_raw/1000) * 3280 / 1000);
   }
 
   if(APRS_SEND_SAT == 1){
 	  sprintf(sats," Sat%d",gpsData.sats_raw);	//
-	  //sprintf(sats," Sat%d",gpsData.speed_raw);
+	  //sprintf(sats," Sat%d",((gpsData.speed_raw)*194)/10000);
+	  //sprintf(sats," Sat%03d",(gpsData.course)/100000);
   }
 
-  //if(APRS_SEND_SPD == 1){
-	  //sprintf(csespd,"%03ld/%03ld",gpsData.heading_raw,gpsData.speed_raw); // <- do poprawki
-  //}
+  if(APRS_SEND_SPD == 1){
+	  sprintf(csespd,"%03ld/%03ld",(gpsData.course)/100000,((gpsData.speed_raw)*194)/10000);
+  }
+
   	  if(APRS_USE_TACTICAL_CALLSIGN == 0){
 	  sprintf(packet_buffer,
           ("!%02d%02d.%02u%c%s%03d%02u.%02u%c%s%s%s%s%s"),
