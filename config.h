@@ -8,7 +8,7 @@
 #define APRS_SSID 						'B' 						// put your APRS SSID here allowed numbers are from 0-F (SSID 0-15)
 #define APRS_TABL 						"/"							// icon table look at: http://www.aprs.org/symbols/symbolsX.txt
 #define APRS_ICON						"["							// icon symbol
-#define APRS_COMMENT 					" testuje trakera z RS41"	// comment
+#define APRS_COMMENT 					" testuje trakera"			// comment
 //
 // tactical name icon and comment
 #define APRS_USE_TACTICAL_CALLSIGN		0							// enable/disable tactical callsign insted callsign, remember you sended this using primary callsign and SSID
@@ -33,7 +33,7 @@
 #define APRS_SMARTBIKON					1							// enable/disable smart bikoning option
 #define APRS_SB_FAST_RATE				30							// seconds default 30s
 #define APRS_SB_LOW_RATE				600							// seconds default 10m
-#define APRS_SB_FAST_SPEED				99							// km/h (max speed = fast rate)
+#define APRS_SB_FAST_SPEED				90							// km/h (max speed = fast rate)
 #define APRS_SB_LOW_SPEED				5							// km/h (min speed = low rate)
 //
 // radio setup
