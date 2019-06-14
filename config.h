@@ -1,6 +1,6 @@
 //
 // Created by SQ5RWU on 2016-12-24.
-// Modified by SQ9MDD on 2019.05.09
+// Modified by SQ9MDD on 2019.05.09-14
 //
 // **************************** config ***************************
 // callsign icon and comment
@@ -27,14 +27,14 @@
 // sending optional info
 #define APRS_SEND_ALT					1							// enable/disable sending altitude (extending APRS data)
 #define APRS_SEND_SPD					1							// enable/disable sending course and speed (extending APRS data)
-#define APRS_SEND_SAT					1							// enable/disable sending SAT condition (@ end of the comment)
+#define APRS_SEND_SAT					0							// enable/disable sending SAT condition (@ end of the comment)
 //
 // smart bikon section
 #define APRS_SMARTBIKON					1							// enable/disable smart bikoning option
 #define APRS_SB_FAST_RATE				30							// seconds default 30s
 #define APRS_SB_LOW_RATE				600							// seconds default 10m
-#define APRS_SB_FAST_SPEED				90							// km/h (max speed = fast rate)
-#define APRS_SB_LOW_SPEED				12							// km/h (min speed = low rate)
+#define APRS_SB_FAST_SPEED				99							// km/h (max speed = fast rate)
+#define APRS_SB_LOW_SPEED				5							// km/h (min speed = low rate)
 //
 // radio setup
 #define ENABLE_TX						1							// enable/disable TX

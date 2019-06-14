@@ -99,7 +99,7 @@ void ublox_init(){
   } while (!ublox_wait_for_ack());
 
   uBloxPacket msgcfgmsg = {.header = {0xb5, 0x62, .messageClass=0x06, .messageId=0x01, .payloadSize=sizeof(uBloxCFGMSGPayload)},
-    .data.cfgmsg = {.msgClass=0x01, .msgID=0x02, .rate=2}};
+    .data.cfgmsg = {.msgClass=0x01, .msgID=0x02, .rate=3}};
 
   do {
     send_ublox_packet(&msgcfgmsg);
@@ -162,6 +162,7 @@ void ublox_handle_incoming_byte(uint8_t data){
 
 void ublox_handle_packet(uBloxPacket *pkt) {
   currentGPSData.licznik_sekund = currentGPSData.licznik_sekund + 2;
+  //_delay_ms(200);
   uBloxChecksum cksum = ublox_calc_checksum(pkt->header.messageClass, pkt->header.messageId, (const uint8_t *) &pkt->data, pkt->header.payloadSize);
   uBloxChecksum *checksum = (uBloxChecksum *)(((uint8_t*)&pkt->data) + pkt->header.payloadSize);
   if (cksum.ck_a != checksum->ck_a || cksum.ck_b != checksum->ck_b) {
@@ -190,7 +191,7 @@ void ublox_handle_packet(uBloxPacket *pkt) {
     	currentGPSData.speed_raw = pkt->data.navvelned.speed;
     }
   }
-
+  //_delay_ms(200);
 }
 uint8_t ublox_wait_for_ack() {
   ack_received = 0;

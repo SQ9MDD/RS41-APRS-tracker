@@ -128,7 +128,7 @@ int main(void) {
     	}
 
 
-        if(gpsData.licznik_sekund > (last_sended+interval-2)){
+        if(gpsData.licznik_sekund > (last_sended+interval)){
         last_sended = gpsData.licznik_sekund;
 
 
