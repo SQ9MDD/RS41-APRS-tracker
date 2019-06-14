@@ -6,6 +6,7 @@
 #define STM32_RTTY_UBLOX_H
 #include <stdint.h>
 
+
 typedef struct {
   int32_t lat_raw;
   int32_t lon_raw;
@@ -19,6 +20,7 @@ typedef struct {
   uint16_t ok_packets;
   uint16_t bad_packets;
   uint32_t course;
+  uint32_t licznik_sekund;
 } GPSEntry;
 
 typedef struct  __attribute__((packed)){

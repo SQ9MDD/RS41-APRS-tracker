@@ -19,22 +19,22 @@
 //
 // path and TX intervals
 #define APRS_PATH						"RFONLY"					// APRS DIGI PATH use WIDE1-1 or WIDE1-1,WIDE2-1 or RFONLY, whatever you want
-#define APRS_PROPORTIONAL_PATH 			0							// enable proportional path algorythm this option override main path see: http://www.aprs.org/newN/ProportionalPathing.txt
+#define APRS_PROPORTIONAL_PATH 			1							// enable proportional path algorythm this option override main path see: http://www.aprs.org/newN/ProportionalPathing.txt
 #define APRS_ALT_REDUCE_PATH			0							// reduce path on altitude, below normal on the ground NONE above APRS_ALT_LIMIT
 #define APRS_ALT_LIMIT					1000						// reduce path above this parameter (in meters)
-#define APRS_INTERVAL					30							// number of seconds between packets, DO NOT SETUP LESS THAN 60s
+#define APRS_INTERVAL					60							// number of seconds between packets, DO NOT SETUP LESS THAN 60s
 //
 // sending optional info
 #define APRS_SEND_ALT					1							// enable/disable sending altitude (extending APRS data)
 #define APRS_SEND_SPD					1							// enable/disable sending course and speed (extending APRS data)
-#define APRS_SEND_SAT					0							// enable/disable sending SAT condition (@ end of the comment)
+#define APRS_SEND_SAT					1							// enable/disable sending SAT condition (@ end of the comment)
 //
 // smart bikon section
-#define APRS_SMARTBIKON					0							// enable/disable smart bikoning option
+#define APRS_SMARTBIKON					1							// enable/disable smart bikoning option
 #define APRS_SB_FAST_RATE				30							// seconds default 30s
 #define APRS_SB_LOW_RATE				600							// seconds default 10m
-#define APRS_SB_FAST_SPEED				90							// km/h
-#define APRS_SB_LOW_SPEED				12							// km/h
+#define APRS_SB_FAST_SPEED				90							// km/h (max speed = fast rate)
+#define APRS_SB_LOW_SPEED				12							// km/h (min speed = low rate)
 //
 // radio setup
 #define ENABLE_TX						1							// enable/disable TX

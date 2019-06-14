@@ -21,12 +21,16 @@
 #include "aprs.h"
 ///////////////////////////// test mode /////////////
 static __IO uint32_t DelayCounter;
+volatile uint32_t last_sended = 0;
+volatile uint32_t interval = APRS_INTERVAL;
+
 //const unsigned char test = 0; // 0 - normal, 1 - short frame only cunter, height, flag
 
 #define GREEN  GPIO_Pin_7
 #define RED  GPIO_Pin_8
 
 unsigned int send_cun;        //frame counter
+
 char status[2] = {'N'};
 int voltage;
 
@@ -96,31 +100,39 @@ int main(void) {
 
   aprs_init();
   while (1) {
-    if (tx_on == 0 && tx_enable) {
 
-    	if(APRS_SMARTBIKON == 0){
-    		_delay_ms((APRS_INTERVAL*1000)-1000);
-    	}
-    	else{
-    		_delay_ms((flexible_delay*1000)-1000);
-    	}
+
+    if (tx_on == 0 && tx_enable) {
+    	// podciagamy dane z GPS-a
         GPSEntry gpsData;
         ublox_get_last_data(&gpsData);
+
+        // zmiana timingu w zaleznosci od wybranego trybu
+    	if(APRS_SMARTBIKON == 0){
+    		interval = APRS_INTERVAL;	//sta³y timing
+    	}
+    	else{
+            // zmiana czestotliwosci nadawania ramki na podstawie predkosci
+            int predkosc = (gpsData.speed_raw)*0.036;
+            if(predkosc < APRS_SB_LOW_SPEED){
+            	flexible_delay = APRS_SB_LOW_RATE;
+            } else if(predkosc > APRS_SB_LOW_SPEED && predkosc < APRS_SB_FAST_SPEED){
+            	// return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+            	// in  = APRS_SB_LOW_SPEED, APRS_SB_FAST_SPEED
+            	// out = APRS_SB_LOW_RATE, APRS_SB_FAST_RATE
+            	flexible_delay = (predkosc - APRS_SB_LOW_SPEED) * (APRS_SB_FAST_SPEED - APRS_SB_LOW_SPEED) / (APRS_SB_FAST_SPEED - APRS_SB_LOW_SPEED) + APRS_SB_LOW_RATE;
+            } else if(predkosc > APRS_SB_FAST_SPEED){
+            	flexible_delay = APRS_SB_FAST_RATE;
+            }
+    		interval = flexible_delay;	//((flexible_delay*1000)-1000);
+    	}
+
+
+        if(gpsData.licznik_sekund > (last_sended+interval-2)){
+        last_sended = gpsData.licznik_sekund;
+
+
         USART_Cmd(USART1, DISABLE);
-
-        // cos ala smart bikon liczony na podstawie predkosci trzeba to przepisac jakos poprawnie
-        int predkosc = (gpsData.speed_raw)*0.036;
-        if(predkosc < APRS_SB_LOW_SPEED){
-        	flexible_delay = APRS_SB_LOW_RATE;
-        } else if(predkosc > APRS_SB_LOW_SPEED && predkosc < APRS_SB_FAST_SPEED){
-        	// return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-        	// in  = APRS_SB_LOW_SPEED, APRS_SB_FAST_SPEED
-        	// out = APRS_SB_LOW_RATE, APRS_SB_FAST_RATE
-        	flexible_delay = (predkosc - APRS_SB_LOW_SPEED) * (APRS_SB_FAST_SPEED - APRS_SB_LOW_SPEED) / (APRS_SB_FAST_SPEED - APRS_SB_LOW_SPEED) + APRS_SB_LOW_RATE;
-        } else if(predkosc > APRS_SB_FAST_SPEED){
-        	flexible_delay = APRS_SB_FAST_RATE;
-        }
-
 
         GPIO_SetBits(GPIOB, GREEN);
         GPIO_ResetBits(GPIOB, RED);
@@ -142,9 +154,11 @@ int main(void) {
         if(ENABLE_TX == 1){
         	radio_disable_tx();
         }
+
         USART_Cmd(USART1, ENABLE);
         GPIO_SetBits(GPIOB, RED);
         GPIO_ResetBits(GPIOB, GREEN);
+    }
     } else {
       NVIC_SystemLPConfig(NVIC_LP_SEVONPEND, DISABLE);
       __WFI();

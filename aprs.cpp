@@ -93,6 +93,7 @@ void aprs_send_position(GPSEntry gpsData) {
   }
 
   if(APRS_SEND_SAT == 1){
+	  //sprintf(sats," Sat%d",gpsData.licznik_sekund);
 	  sprintf(sats," Sat%d",gpsData.sats_raw);	//
 	  //sprintf(sats," Sat%d",((gpsData.speed_raw)*194)/10000);
 	  //sprintf(sats," Sat%03d",(gpsData.course)/100000);
@@ -138,7 +139,7 @@ void aprs_send_position(GPSEntry gpsData) {
   	          APRS_TACTICAL_COMMENT,
   	          sats);
   	  }
-
+  	  gpsData.licznik_sekund = 0;
 	  qaprs.sendData(packet_buffer);
 	  //qaprs.sendData(gpsData.speed_raw);
 }

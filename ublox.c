@@ -161,12 +161,12 @@ void ublox_handle_incoming_byte(uint8_t data){
 }
 
 void ublox_handle_packet(uBloxPacket *pkt) {
+  currentGPSData.licznik_sekund = currentGPSData.licznik_sekund + 2;
   uBloxChecksum cksum = ublox_calc_checksum(pkt->header.messageClass, pkt->header.messageId, (const uint8_t *) &pkt->data, pkt->header.payloadSize);
   uBloxChecksum *checksum = (uBloxChecksum *)(((uint8_t*)&pkt->data) + pkt->header.payloadSize);
   if (cksum.ck_a != checksum->ck_a || cksum.ck_b != checksum->ck_b) {
     currentGPSData.bad_packets += 1;
   } else {
-
     if (pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x02){
       currentGPSData.ok_packets += 1;
       currentGPSData.lat_raw = pkt->data.navposllh.lat;
