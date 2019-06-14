@@ -45,12 +45,14 @@ void calcDMH(long x, int8_t* degrees, uint8_t* minutes, uint8_t* h_minutes) {
 
 void aprs_send_status_ok(){
 	char packet_buffer[30];
+	qaprs.init(0, 0, (char *) APRS_CALLSIGN, (const uint8_t) APRS_SSID, (char *) "APZQAP", '0', (char *) "");
 	sprintf(packet_buffer,">FIX OK");
 	qaprs.sendData(packet_buffer);
 }
 
 void aprs_send_status(){
 	char packet_buffer[30];
+	qaprs.init(0, 0, (char *) APRS_CALLSIGN, (const uint8_t) APRS_SSID, (char *) "APZQAP", '0', (char *) "");
 	sprintf(packet_buffer,">NO FIX");
 	qaprs.sendData(packet_buffer);
 }

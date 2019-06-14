@@ -11,7 +11,7 @@
 #define APRS_COMMENT 					"testuje trakera"		// comment
 //
 // tactical name icon and comment
-#define APRS_USE_TACTICAL_CALLSIGN		1						// enable/disable tactical callsign insted callsign, remember you sended this using primary callsign and SSID
+#define APRS_USE_TACTICAL_CALLSIGN		0						// enable/disable tactical callsign insted callsign, remember you sended this using primary callsign and SSID
 #define APRS_TACTICAL_CALLSIGN			"ABRA"					// optional tactical name for your item up 9 characters (This is an ITEM from APRS spec. in this case my pet dog's name)
 #define APRS_TACTICAL_TBL				"/"						// icon table for tactical call sign look at: http://www.aprs.org/symbols/symbolsX.txt
 #define APRS_TACTICAL_ICON				"p"						// icon symbol for tacti
@@ -22,10 +22,10 @@
 #define APRS_PROPORTIONAL_PATH 			0						// enable proportional path algorythm this option override main path see: http://www.aprs.org/newN/ProportionalPathing.txt
 #define APRS_ALT_REDUCE_PATH			0						// reduce path on altitude, below normal on the ground NONE above APRS_ALT_LIMIT
 #define APRS_ALT_LIMIT					1000					// reduce path above this parameter (in meters)
-#define APRS_INTERVAL					180						// number of seconds between packets, DO NOT SETUP LESS THAN 60s
+#define APRS_INTERVAL					60						// number of seconds between packets, DO NOT SETUP LESS THAN 60s
 //
 // sending optional info
-#define APRS_SEND_ALT					0						// enable/disable sending altitude
+#define APRS_SEND_ALT					1						// enable/disable sending altitude
 #define APRS_SEND_SAT					0						// enable/disable sending SAT condition
 #define APRS_SEND_SPD					1						// course and speed
 //

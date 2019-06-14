@@ -186,7 +186,7 @@ void ublox_handle_packet(uBloxPacket *pkt) {
     } else if (pkt->header.messageClass == 0x05 && pkt->header.messageId == 0x00){
       nack_received = 1;
     } else if(pkt->header.messageClass == 0x01 && pkt->header.messageId == 0x012){
-    	currentGPSData.course = pkt->data.navvelned.cAcc;
+    	currentGPSData.course = pkt->data.navvelned.heading;
     	currentGPSData.speed_raw = pkt->data.navvelned.speed;
     }
   }
