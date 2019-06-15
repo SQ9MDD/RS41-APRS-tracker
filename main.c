@@ -23,6 +23,7 @@
 static __IO uint32_t DelayCounter;
 volatile uint32_t last_sended = 0;
 volatile uint32_t interval = APRS_INTERVAL;
+volatile int last_course = 0;
 
 //const unsigned char test = 0; // 0 - normal, 1 - short frame only cunter, height, flag
 
@@ -107,13 +108,14 @@ int main(void) {
         GPSEntry gpsData;
         ublox_get_last_data(&gpsData);
 
+        int predkosc = (gpsData.speed_raw)*0.036;
         // zmiana timingu w zaleznosci od wybranego trybu
     	if(APRS_SMARTBIKON == 0){
     		interval = APRS_INTERVAL;	//sta³y timing
     	}
     	else{
             // zmiana czestotliwosci nadawania ramki na podstawie predkosci
-            int predkosc = (gpsData.speed_raw)*0.036;
+
             if(predkosc < APRS_SB_LOW_SPEED){
             	flexible_delay = APRS_SB_LOW_RATE;
             } else if(predkosc > APRS_SB_LOW_SPEED && predkosc < APRS_SB_FAST_SPEED){
@@ -126,8 +128,20 @@ int main(void) {
             }
     		interval = flexible_delay;	//((flexible_delay*1000)-1000);
     	}
-
-
+    	// przeliczanie zmian kata kursu uwaga na przejscie 359<->0
+    	// uzaleznic od minimalnej predkosci bo bedzie dryf na postoju
+    	int current_course = (gpsData.course)/100000;
+    	int delta_course = abs(last_course-current_course);
+    	if(last_course > (359 - APRS_SB_TURN_ANGLE) && current_course < (0 + APRS_SB_TURN_ANGLE)){
+    		delta_course = 359 - delta_course;
+    	}
+    	if(last_course  < (0 + APRS_SB_TURN_ANGLE) && current_course > (359 - APRS_SB_TURN_ANGLE)){
+    		delta_course = 359 - delta_course;
+    	}
+    	if(delta_course > APRS_SB_TURN_ANGLE && predkosc > APRS_SB_LOW_SPEED){
+    		interval = 10;
+    	}
+    	last_course = current_course;
         if(gpsData.licznik_sekund > (last_sended+interval)){
         last_sended = gpsData.licznik_sekund;
 
@@ -141,11 +155,11 @@ int main(void) {
         }
 
         //tutaj zlecamy wysylka ramki
-        if(gpsData.fix < 3){
+        if(gpsData.fix < 3){	//jesli nie ma fixa to status
         	aprs_send_status();
         	stat_sended = 1;
         }else{
-        	if(stat_sended == 1){
+        	if(stat_sended == 1){ //jesli zlapal fixa to raz status pozniej juz normalne ramki
         		aprs_send_status_ok();
         		stat_sended = 0;
         	}

@@ -11,21 +11,21 @@
 #define APRS_COMMENT 					" testuje trakera"			// comment
 //
 // tactical name icon and comment
-#define APRS_USE_TACTICAL_CALLSIGN		0							// enable/disable tactical callsign insted callsign, remember you sended this using primary callsign and SSID
+#define APRS_USE_TACTICAL_CALLSIGN		1							// enable/disable tactical callsign insted callsign, remember you sended this using primary callsign and SSID
 #define APRS_TACTICAL_CALLSIGN			"ABRA"						// optional tactical name for your item up 9 characters (This is an ITEM from APRS spec. in this case my pet dog's name)
 #define APRS_TACTICAL_TBL				"/"							// icon table for tactical call sign look at: http://www.aprs.org/symbols/symbolsX.txt
 #define APRS_TACTICAL_ICON				"p"							// icon symbol for tacti
 #define APRS_TACTICAL_COMMENT			"pies na spacerze"			// comment for tactical
 //
 // path and TX intervals
-#define APRS_PATH						"RFONLY"					// APRS DIGI PATH use WIDE1-1 or WIDE1-1,WIDE2-1 or RFONLY, whatever you want
-#define APRS_PROPORTIONAL_PATH 			1							// enable proportional path algorythm this option override main path see: http://www.aprs.org/newN/ProportionalPathing.txt
+#define APRS_PATH						"WIDE1-1"					// APRS DIGI PATH use WIDE1-1 or WIDE1-1,WIDE2-1 or RFONLY, whatever you want
+#define APRS_PROPORTIONAL_PATH 			0							// enable proportional path algorythm this option override main path see: http://www.aprs.org/newN/ProportionalPathing.txt
 #define APRS_ALT_REDUCE_PATH			0							// reduce path on altitude, below normal on the ground NONE above APRS_ALT_LIMIT
 #define APRS_ALT_LIMIT					1000						// reduce path above this parameter (in meters)
 #define APRS_INTERVAL					60							// number of seconds between packets, DO NOT SETUP LESS THAN 60s
 //
 // sending optional info
-#define APRS_SEND_ALT					1							// enable/disable sending altitude (extending APRS data)
+#define APRS_SEND_ALT					0							// enable/disable sending altitude (extending APRS data)
 #define APRS_SEND_SPD					1							// enable/disable sending course and speed (extending APRS data)
 #define APRS_SEND_SAT					0							// enable/disable sending SAT condition (@ end of the comment)
 //
@@ -35,6 +35,7 @@
 #define APRS_SB_LOW_RATE				600							// seconds default 10m
 #define APRS_SB_FAST_SPEED				90							// km/h (max speed = fast rate)
 #define APRS_SB_LOW_SPEED				5							// km/h (min speed = low rate)
+#define APRS_SB_TURN_ANGLE				30							// turn angle treshold
 //
 // radio setup
 #define ENABLE_TX						1							// enable/disable TX
