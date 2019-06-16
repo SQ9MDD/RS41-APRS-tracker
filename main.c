@@ -24,6 +24,8 @@ static __IO uint32_t DelayCounter;
 volatile uint32_t last_sended = 0;
 volatile uint32_t interval = APRS_INTERVAL;
 volatile int last_course = 0;
+volatile int last_fix = 0;
+volatile int current_fix = 0;
 
 //const unsigned char test = 0; // 0 - normal, 1 - short frame only cunter, height, flag
 
@@ -101,15 +103,14 @@ int main(void) {
 
   aprs_init();
   while (1) {
-
-
-    if (tx_on == 0 && tx_enable) {
     	// podciagamy dane z GPS-a
         GPSEntry gpsData;
         ublox_get_last_data(&gpsData);
-
         int predkosc = (gpsData.speed_raw)*0.036;
-        // zmiana timingu w zaleznosci od wybranego trybu
+        int current_course = (gpsData.course)/100000;
+        current_fix = gpsData.fix;
+
+        // zmiana timingu w zaleznosci od wybranego trybu smartbikon or not
     	if(APRS_SMARTBIKON == 0){
     		interval = APRS_INTERVAL;	//sta³y timing
     	}
@@ -126,23 +127,30 @@ int main(void) {
             } else if(predkosc > APRS_SB_FAST_SPEED){
             	flexible_delay = APRS_SB_FAST_RATE;
             }
+
+
     		interval = flexible_delay;	//((flexible_delay*1000)-1000);
+
+        	// przeliczanie zmian kata kursu uwaga na przejscie 359<->0
+        	// uzaleznic od minimalnej predkosci bo bedzie dryf na postoju
+
+        	int delta_course = abs(last_course-current_course);
+        	if(last_course > (359 - APRS_SB_TURN_ANGLE) && current_course < (0 + APRS_SB_TURN_ANGLE)){
+        		delta_course = 359 - delta_course;
+        	}
+        	if(last_course  < (0 + APRS_SB_TURN_ANGLE) && current_course > (359 - APRS_SB_TURN_ANGLE)){
+        		delta_course = 359 - delta_course;
+        	}
+        	// jesli zmiana kursu wieksza niz podana w konfigu wyslij ramke za 10sec
+        	if(delta_course > APRS_SB_TURN_ANGLE && predkosc > APRS_SB_LOW_SPEED && interval > 10){
+        		interval = 10;
+        	}
+        	last_course = current_course;
     	}
-    	// przeliczanie zmian kata kursu uwaga na przejscie 359<->0
-    	// uzaleznic od minimalnej predkosci bo bedzie dryf na postoju
-    	int current_course = (gpsData.course)/100000;
-    	int delta_course = abs(last_course-current_course);
-    	if(last_course > (359 - APRS_SB_TURN_ANGLE) && current_course < (0 + APRS_SB_TURN_ANGLE)){
-    		delta_course = 359 - delta_course;
-    	}
-    	if(last_course  < (0 + APRS_SB_TURN_ANGLE) && current_course > (359 - APRS_SB_TURN_ANGLE)){
-    		delta_course = 359 - delta_course;
-    	}
-    	if(delta_course > APRS_SB_TURN_ANGLE && predkosc > APRS_SB_LOW_SPEED){
-    		interval = 10;
-    	}
-    	last_course = current_course;
-        if(gpsData.licznik_sekund > (last_sended+interval)){
+
+    	//odliczanie do wysylki jesli warunek spelniony wyslij ramke
+        if( (gpsData.licznik_sekund > (last_sended+interval) ) || (last_fix == 0 && current_fix == 3)){
+        last_fix = 1;
         last_sended = gpsData.licznik_sekund;
 
 
@@ -155,11 +163,11 @@ int main(void) {
         }
 
         //tutaj zlecamy wysylka ramki
-        if(gpsData.fix < 3){	//jesli nie ma fixa to status
+        if(gpsData.fix < 3){	//jesli nie ma fixa i juz czas to wysylaj status
         	aprs_send_status();
         	stat_sended = 1;
         }else{
-        	if(stat_sended == 1){ //jesli zlapal fixa to raz status pozniej juz normalne ramki
+        	if(stat_sended == 1){ //jesli zlapal fixa a wczesniej wysylal status no fix to teraz wyslij status FIX OK a pozniej juz normalne ramki
         		aprs_send_status_ok();
         		stat_sended = 0;
         	}
@@ -172,10 +180,7 @@ int main(void) {
         USART_Cmd(USART1, ENABLE);
         GPIO_SetBits(GPIOB, RED);
         GPIO_ResetBits(GPIOB, GREEN);
-    }
-    } else {
-      NVIC_SystemLPConfig(NVIC_LP_SEVONPEND, DISABLE);
-      __WFI();
+        _delay_ms(100);
     }
   }
 }
