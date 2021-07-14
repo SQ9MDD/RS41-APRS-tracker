@@ -17,27 +17,11 @@
     along with ArduinoQAPRS; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-    ArduinoQAPRS jest wolnym oprogramowaniem; moĹĽesz go rozprowadzaÄ‡ dalej
-    i/lub modyfikowaÄ‡ na warunkach Powszechnej Licencji Publicznej GNU,
-    wydanej przez FundacjÄ™ Wolnego Oprogramowania - wedĹ‚ug wersji 2 tej
-    Licencji lub (wedĹ‚ug twojego wyboru) ktĂłrejĹ› z pĂłĹşniejszych wersji.
-
-    Niniejszy program rozpowszechniany jest z nadziejÄ…, iĹĽ bÄ™dzie on
-    uĹĽyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyĹ›lnej
-    gwarancji PRZYDATNOĹšCI HANDLOWEJ albo PRZYDATNOĹšCI DO OKREĹšLONYCH
-    ZASTOSOWAĹ�. W celu uzyskania bliĹĽszych informacji siÄ™gnij do
-    Powszechnej Licencji Publicznej GNU.
-
-    Z pewnoĹ›ciÄ… wraz z niniejszym programem otrzymaĹ‚eĹ› teĹĽ egzemplarz
-    Powszechnej Licencji Publicznej GNU (GNU General Public License);
-    jeĹ›li nie - napisz do Free Software Foundation, Inc., 59 Temple
-    Place, Fifth Floor, Boston, MA  02110-1301  USA
-
  */
 
 /**
  * @file
- * @brief NagĹ‚Ăłwki dla klasy QAPRSBase
+ * @brief Headers for the QAPRSBase class
  */
 
 #ifndef QAPRSBASE_H_
@@ -46,36 +30,36 @@
 #include "QAPRSCommon.h"
 
 /**
- * @brief Klasa bazowa do nadawania APRS
- * @details Klasa sĹ‚uzy jako baza do podimplemntacji generowania AFSK.
+ * @brief Base class for APRS broadcasting
+ * @details The class serves as the basis for the sub-implementation of AFSK generation.
  */
 class QAPRSBase {
 private:
 	/**
-	 * @brief suma kontrolna pakietu
+         * @brief checksum of the package
 	 */
 	uint16_t ax25CRC;
 	/**
-	 * @brief ilosÄ‡ bajtĂłw synchronizacyjnych do nadania przed zawartosciÄ… pakietu
+	 * @brief amount of sync bytes to send before packet content
 	 */
 	static const uint8_t ax25HeaderFlagFieldCount1200 = 25;
 	/**
-	 * @brief ilosÄ‡ bajtĂłw synchronizacyjnych do nadania przed zawartosciÄ… pakietu
+	 * @brief amount of sync bytes to send before packet content
 	 */
 	static const uint8_t ax25HeaderFlagFieldCount300 = 90; //45;
 	/**
-	 * @brief ilosÄ‡ bajtĂłw synchronizacyjnych do nadania przed zawartosciÄ… pakietu
+	 * @brief amount of sync bytes to send before packet content
 	 */
 	uint8_t ax25HeaderFlagFieldCount;
 	/**
-	 * @brief Flaga
+	 * @brief Flag
 	 * @details <http://www.tapr.org/pub_ax25.html#2.2.1>
 	 */
 	static const uint8_t ax25FlagFieldValue = 0x7E;
 	/**
-	 * @brief Czas wysyĹ‚ania podedynczego tonu. W us.
-	 * @details Czas calkowity powinien wynosic 833us. WartosÄ‡ podana tutaj uwzglÄ™dnia zwĹ‚okÄ™ zwiÄ…zanÄ… z wywoĹ‚ywaniem
-	 * funkcji itp.
+         * @brief Sending time of a single tone. In us.
+         * @details Total time should be 833us. The value given here takes into account the delay associated with calling
+         * functions etc.
 	 */
 #if F_CPU == 16000000L
 	static const uint16_t toneSendTime1200 = 815;
@@ -85,30 +69,30 @@ private:
 	//static const uint16_t toneSendTime1200 = 1000000/1200;
 #endif
 	/**
-	 * @brief Czas wysyĹ‚ania podedynczego tonu. W ms.
-	 * @details Czas calkowity powinien wynosic 4*833ms. WartosÄ‡ podana tutaj uwzglÄ™dnia zwĹ‚okÄ™ zwiÄ…zanÄ… z wywoĹ‚ywaniem
-	 * funkcji itp.
+         * @brief Sending time of a single tone. In ms.
+         * @details Total time should be 4 * 833ms. The value given here takes into account the delay associated with calling
+         * functions etc.
 	 */
 	static const uint16_t toneSendTime300 = 815 + 3 * 833;
 	/**
-	 * @brief Czas oczekiwania na zwolnienie kanaĹ‚u.
-	 * @details Co 100ms sprawdzamy czy moĹĽna juĹĽ nadawaÄ‡ @see canTransmit
+         * @brief Waiting time for the channel to be released.
+         * @details Every 100ms we check if @see canTransmit can be sent
 	 */
 	static const uint16_t channelFreeWaitingMS = 1; // 2000 ms
 	/**
-	 * @brief Domylslny czas pomiÄ™dzy wĹ‚Ä…czeniem nadawania a rozpoczÄ™ciem generowania AFSK
+	 * @brief Default time between transmitting and starting AFSK generation
 	 */
 	static const uint16_t defaultTxDelay = 1; // 300 ms
 	/**
-	 * @brief Pin Arduino na ktĂłrym ustawiamy logicznÄ… 1 w momencie nadawania
+	 * @brief Arduino Pin on which we set the logical 1 when transmitting
 	 */
 	int8_t txEnablePin;
 	/**
-	 * @brief Bufor tymczasowy
+	 * @brief Temporary buffer
 	 */
 	uint8_t tmpData[255];
 	/**
-	 * @brief OpĂłĹşnienie w ms pomiÄ™dzy ustawieniem stanu wysokiego na wyjsciu txEnablePin a rozpoczÄ™ciem generowania AFSK
+	 * @brief Delay in ms between setting txEnablePin output high and starting AFSK generation
 	 */
 	uint16_t txDelay;
 	/**
@@ -140,15 +124,15 @@ private:
 	void parseRelays(const char * relays, char * dst);
 protected:
 	/**
-	 * @brief Pin Arduino [we] ktĂłry musi byÄ‡ w stanie niskim (lub wysokim, jesli numer jest ujemny) aby rozpoczÄ…Ä‡ nadawanie.
+	 * @brief The Arduino pin [in] that must be low (or high if the number is negative) to start transmitting.
 	 */
 	int8_t sensePin;
 	/**
-	 * @brief Obecnie generowany ton
+	 * @brief Tone currently generated
 	 */
 	QAPRSSendingTone currentTone;
 	/**
-	 * @brief Obecnie uĹĽywany wariant
+	 * @brief Currently used variant
 	 */
 	QAPRSVariant variant;
 
@@ -195,7 +179,7 @@ public:
 };
 
 /**
- * @brief PrzesuĹ„ bajt o 1 bit w lewo. UĹĽywane w nagĹ‚Ăłwku ax.25
+ * @brief Shift byte 1 bit to the left. Used in the header ax.25
  */
 #define SHIFT_BYTE(x) (x << 1)
 
