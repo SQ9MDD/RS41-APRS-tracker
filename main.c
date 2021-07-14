@@ -2,6 +2,7 @@
 // released under GPL v.2 by anonymous developer
 // enjoy and have a nice day
 // ver 1.5a
+// Polish comments translated to English 14/7/2021
 #include <stm32f10x_gpio.h>
 #include <stm32f10x_tim.h>
 #include <stm32f10x_spi.h>
@@ -103,19 +104,19 @@ int main(void) {
 
   aprs_init();
   while (1) {
-    	// podciagamy dane z GPS-a
+    	// we pull up data from GPS
         GPSEntry gpsData;
         ublox_get_last_data(&gpsData);
         int predkosc = (gpsData.speed_raw)*0.036;
         int current_course = (gpsData.course)/100000;
         current_fix = gpsData.fix;
 
-        // zmiana timingu w zaleznosci od wybranego trybu smartbikon or not
+        // Timing change depending on the selected smartbikon or not mode
     	if(APRS_SMARTBIKON == 0){
-    		interval = APRS_INTERVAL;	//sta³y timing
+    		interval = APRS_INTERVAL;	//staÂ³y timing
     	}
     	else{
-            // zmiana czestotliwosci nadawania ramki na podstawie predkosci
+            // changing the frame rate based on the speed
 
             if(predkosc < APRS_SB_LOW_SPEED){
             	flexible_delay = APRS_SB_LOW_RATE;
@@ -131,8 +132,8 @@ int main(void) {
 
     		interval = flexible_delay;	//((flexible_delay*1000)-1000);
 
-        	// przeliczanie zmian kata kursu uwaga na przejscie 359<->0
-        	// uzaleznic od minimalnej predkosci bo bedzie dryf na postoju
+        	// recalculation of course angle changes note on transition 359 <-> 0
+        	// depend on the minimum speed because there will be a drift at a standstill
 
         	int delta_course = abs(last_course-current_course);
         	if(last_course > (359 - APRS_SB_TURN_ANGLE) && current_course < (0 + APRS_SB_TURN_ANGLE)){
@@ -141,14 +142,14 @@ int main(void) {
         	if(last_course  < (0 + APRS_SB_TURN_ANGLE) && current_course > (359 - APRS_SB_TURN_ANGLE)){
         		delta_course = 359 - delta_course;
         	}
-        	// jesli zmiana kursu wieksza niz podana w konfigu wyslij ramke za 10sec
+        	// if the rate change is greater than the one given in the config, send the frame in 10 seconds
         	if(delta_course > APRS_SB_TURN_ANGLE && predkosc > APRS_SB_LOW_SPEED && interval > 10){
         		interval = 10;
         	}
         	last_course = current_course;
     	}
 
-    	//odliczanie do wysylki jesli warunek spelniony wyslij ramke
+    	// countdown to shipment, if the condition is met, send the frame
         if( (gpsData.licznik_sekund > (last_sended+interval) ) || (last_fix == 0 && current_fix == 3)){
         last_fix = 1;
         last_sended = gpsData.licznik_sekund;
@@ -162,12 +163,12 @@ int main(void) {
         	radio_enable_tx();
         }
 
-        //tutaj zlecamy wysylka ramki
-        if(gpsData.fix < 3){	//jesli nie ma fixa i juz czas to wysylaj status
+        // here we order the shipping of the frame
+        if(gpsData.fix < 3){	// if there is no fix and it's time, send the status
         	aprs_send_status();
         	stat_sended = 1;
         }else{
-        	if(stat_sended == 1){ //jesli zlapal fixa a wczesniej wysylal status no fix to teraz wyslij status FIX OK a pozniej juz normalne ramki
+        	if(stat_sended == 1){ // if he caught a fix and previously sent no fix status, now send FIX OK status and then normal frames
         		aprs_send_status_ok();
         		stat_sended = 0;
         	}
