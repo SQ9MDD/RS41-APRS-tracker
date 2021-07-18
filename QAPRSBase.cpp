@@ -17,29 +17,11 @@
     along with ArduinoQAPRS; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-    Ten plik jest czÄ™Ĺ›ciÄ… ArduinoQAPRS.
-
-    ArduinoQAPRS jest wolnym oprogramowaniem; moĹĽesz go rozprowadzaÄ‡ dalej
-    i/lub modyfikowaÄ‡ na warunkach Powszechnej Licencji Publicznej GNU,
-    wydanej przez FundacjÄ™ Wolnego Oprogramowania - wedĹ‚ug wersji 2 tej
-    Licencji lub (wedĹ‚ug twojego wyboru) ktĂłrejĹ› z pĂłĹşniejszych wersji.
-
-    Niniejszy program rozpowszechniany jest z nadziejÄ…, iĹĽ bÄ™dzie on
-    uĹĽyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyĹ›lnej
-    gwarancji PRZYDATNOĹšCI HANDLOWEJ albo PRZYDATNOĹšCI DO OKREĹšLONYCH
-    ZASTOSOWAĹ�. W celu uzyskania bliĹĽszych informacji siÄ™gnij do
-    Powszechnej Licencji Publicznej GNU.
-
-    Z pewnoĹ›ciÄ… wraz z niniejszym programem otrzymaĹ‚eĹ› teĹĽ egzemplarz
-    Powszechnej Licencji Publicznej GNU (GNU General Public License);
-    jeĹ›li nie - napisz do Free Software Foundation, Inc., 59 Temple
-    Place, Fifth Floor, Boston, MA  02110-1301  USA
-
  */
 
 /**
  * @file
- * @brief Implementacja klasy QAPRSBase
+ * @brief Implementation of the QAPRSBase class
  */
 
 #include "QAPRSBase.h"
@@ -49,19 +31,19 @@
 
 QAPRSBase * QAPRSGlobalObject;
 /**
- * Czy moĹĽna wysyĹ‚aÄ‡ dane?
- * @return 1 jesli transmisja jest mozliwa, 0 w przeciwnym wypadku
+ * Can data be sent?
+ * @return 1 if transmission is possible, 0 otherwise
  */
 uint8_t QAPRSBase::canTransmit(){
 	return 1;
 }
 
 /**
- * Rozpocznij nadawanie pakietu ax.25
- * Dodatkowo:
- * 	- wĹ‚Ä…cz nadawanie @see enableTransmission
- * 	- zainicjalizuj crc i ton
- * IlosÄ‡ bajtĂłw synchronizacji okresla @see ax25HeaderFlagFieldCount
+ * Start broadcasting the ax.25 package
+ * Additionally:
+ * - enable broadcasting @see enableTransmission
+ * - initialize crc and tone
+ * The number of bytes for timing is specified by @see ax25HeaderFlagFieldCount
  */
 void QAPRSBase::ax25SendHeaderBegin() {
 	this->enableTransmission();
@@ -77,7 +59,7 @@ void QAPRSBase::ax25SendHeaderBegin() {
 }
 
 /**
- * Wyslij zakoĹ„czenie pakietu, to jest 2 bajty sumy kontrolnej i znacznik koĹ„ca pakietu @see QAPRSBase::ax25FlagFieldValue
+ *Send packet termination, that is 2 bytes of checksum and packet end flag @see QAPRSBase::ax25FlagFieldValue
  */
 void QAPRSBase::ax25SendFooter() {
 	/**
@@ -96,8 +78,8 @@ void QAPRSBase::ax25SendFooter() {
 }
 
 /**
- * WysyĹ‚a bajt ax.25
- * @param byte Bajt do wysĹ‚ania
+ * Sends the ax.25 byte
+ * @param byte Byte to send
  */
 void QAPRSBase::ax25SendByte(uint8_t byte) {
 	static uint8_t i;
@@ -106,11 +88,11 @@ void QAPRSBase::ax25SendByte(uint8_t byte) {
 	static uint8_t bit_stuffing_counter;
 
 
-	// zapisujemy sobie czy nadawany bit nie jest aby flagÄ… - bo jÄ… nadajemy w specjalny sposĂłb
+	// we write down whether the transmitted bit is not a flag - because we send it in a special way
 	is_flag = (uint8_t) (byte == this->ax25FlagFieldValue);
 
 	for(i=0;i<8;i++){
-		// nadawanie od najmniejznaczacego bitu
+		// transmit from the least significant bit
 		ls_bit = (uint8_t) (byte & 1);
 
 		if (is_flag){
@@ -122,7 +104,7 @@ void QAPRSBase::ax25SendByte(uint8_t byte) {
 		if (ls_bit){
 			bit_stuffing_counter++;
 			if (bit_stuffing_counter == 5){
-				// jesli mamy 5 bitow o wartosci 1 z rzedu to
+				// if we have 5 bits with a value of 1 in a row then
 				delayuSeconds(this->_toneSendTime);
 				this->toggleTone();
 				bit_stuffing_counter = 0;
@@ -137,8 +119,8 @@ void QAPRSBase::ax25SendByte(uint8_t byte) {
 }
 
 /**
- * Dodaje bit do sumy kontrolnej ramki
- * @param ls_bit Bit danych
+ * Adds a bit to the frame's checksum
+ * @param ls_bit Data bit
  */
 void QAPRSBase::ax25CalcCRC(uint8_t ls_bit) {
 	static unsigned short	crc_tmp;
@@ -152,7 +134,7 @@ void QAPRSBase::ax25CalcCRC(uint8_t ls_bit) {
 	}
 }
 /**
- * PrzeĹ‚Ä…cz aktualnie generowany ton. @see QAPRSSendingTone
+ * Switch the currently generated tone. @see QAPRSSendingTone
  */
 inline void QAPRSBase::toggleTone() {
 	this->currentTone = (this->currentTone == QAPRSSpace) ? QAPRSMark : QAPRSSpace;
@@ -160,11 +142,11 @@ inline void QAPRSBase::toggleTone() {
 }
 
 /**
- * Inicjalizuj Timer1 ktĂłry jest uĹĽywany do generowania MARK i SPACE
+ * Initialize Timer1 which is used to generate MARK and SPACE
  */
 void QAPRSBase::initializeTimer1() {
     #if defined(__arm__)
-    //TODO: przepisaÄ‡ na STM32
+    //TODO: rewrite to STM32
     #else
         noInterrupts();
         TIMSK1 |= _BV(TOIE1);
@@ -176,11 +158,11 @@ void QAPRSBase::initializeTimer1() {
 }
 
 /**
- * Inicjalizuj radio i piny.
+ *Initialize radio and pins.
  */
 void QAPRSBase::initializeRadio() {
     #if defined(__arm__)
-    //TODO: przepisaÄ‡ na STM32
+    //TODO: rewrite to STM32
     #else
         if (this->sensePin){
             pinMode(abs(this->sensePin), INPUT);
@@ -194,11 +176,11 @@ void QAPRSBase::initializeRadio() {
 }
 
 /**
- * WĹ‚Ä…cz nadawanie. Metoda dodatkowo realizuje opĂłĹşnienie nadawania jesli ustawiono. @see QAPRSBase::setTxDelay
+ * Turn on broadcast. The method additionally performs a transmit delay, if set. @see QAPRSBase :: setTxDelay
  */
 void QAPRSBase::enableTransmission() {
     #if defined(__arm__)
-    //TODO: przepisaÄ‡ na STM32
+    //TODO: rewrite to STM32
     #else
         digitalWrite(abs(this->txEnablePin), (this->txEnablePin > 0) ? HIGH : LOW);
     #endif
@@ -213,11 +195,11 @@ void QAPRSBase::enableTransmission() {
 }
 
 /**
- * WyĹ‚Ä…cz nadawanie.
+ * Turn off broadcasting.
  */
 void QAPRSBase::disableTranssmision() {
     #if defined(__arm__)
-    //TODO: przepisaÄ‡ na STM32
+    //TODO: rewrite to STM32
     #else
 	    digitalWrite(abs(this->txEnablePin), (this->txEnablePin > 0) ? LOW : HIGH);
     #endif
@@ -228,8 +210,8 @@ void QAPRSBase::disableTranssmision() {
 }
 
 /**
- * Wyslij bufor danych. @warning Ta metoda zakoĹ„czy pracÄ™ na bajcie o wartosci 0 jesli wystÄ…pi.
- * @param buffer Bufor z danymi do wysĹ‚ania
+ * Send data buffer. @warning This method will exit with a byte of 0 if it occurs.
+ * @param buffer Buffer with data to be sent
  * @return
  */
 QAPRSReturnCode QAPRSBase::send(char * buffer) {
@@ -237,12 +219,12 @@ QAPRSReturnCode QAPRSBase::send(char * buffer) {
 }
 
 /**
- * Wyslij dane APRS.
- * @param from_addr Adres [znak] ĹşrĂłdĹ‚owy. Max 6 znakĂłw!
- * @param from_ssid SSID stacji ĹşrĂłdĹ‚owej: bajty od '0' do 'F'
- * @param to_addr Adres [znak] docelowy. Max 6 znakĂłw!
- * @param to_ssid SSID stacji docelowej: bajty od '0' do 'F'
- * @param packet_content Bufor z danymi pakietu APRS
+ * Send APRS details.
+ * @param from_addr Source [character] address. Max 6 characters!
+ * @param from_ssid Source station SSID: bytes from '0' to 'F'
+ * @param to_addr Destination [character] address. Max 6 characters!
+ * @param to_ssid Destination station SSID: bytes '0' to 'F'
+ * @param packet_content Buffer with APRS packet data
  * @return
  */
 QAPRSReturnCode QAPRSBase::send(char * from_addr, uint8_t from_ssid, char * to_addr, uint8_t to_ssid, char * packet_content) {
@@ -271,9 +253,9 @@ QAPRSReturnCode QAPRSBase::send(char * from_addr, uint8_t from_ssid, char * to_a
 }
 
 /**
- * WysyĹ‚a bufor danych o oznaczonej dĹ‚ugosci.
- * @param buffer Bufor z danymi do wysĹ‚ania
- * @param length DĹ‚ugosc bufora
+ * Sends a data buffer of the marked length.
+ * @param buffer Buffer with data to be sent
+ * @param length The length of the buffer
  * @return
  */
 QAPRSReturnCode QAPRSBase::send(char* buffer, size_t length) {
@@ -290,8 +272,8 @@ QAPRSReturnCode QAPRSBase::send(char* buffer, size_t length) {
 			this->ax25SendFooter();
 			return QAPRSReturnOK;
 		} else {
-			// jesli nie mozna to czekamy 100ms i sprawdzamy ponownie
-			// maks. czas oczekiwania to channelFreeWaitingMS
+			// if not possible, wait 100ms and check again
+			// max wait time is channelFreeWaitingMS
             #if defined(__arm__)
                 _delay_ms(100);
             #else
@@ -304,13 +286,13 @@ QAPRSReturnCode QAPRSBase::send(char* buffer, size_t length) {
 }
 
 /**
- * Wyslij dane APRS.
- * @param from_addr Adres [znak] ĹşrĂłdĹ‚owy. Max 6 znakĂłw!
- * @param from_ssid SSID stacji ĹşrĂłdĹ‚owej: bajty od '0' do 'F'
- * @param to_addr Adres [znak] docelowy. Max 6 znakĂłw!
- * @param to_ssid SSID stacji docelowej: bajty od '0' do 'F'
- * @param relays Bufor z danymi przekaĹşnikĂłw. Np. "WIDE1 1" @warning JeĹĽeli majÄ… byÄ‡ podane 2 lub wiÄ™cej pozycji to zapisujemy je BEZ przecinkĂłw itp. np. "WIDE1 1WIDE2 1"
- * @param packet_content Bufor z danymi pakietu APRS
+ * Send APRS details.
+ * @param from_addr Source [character] address. Max 6 characters!
+ * @param from_ssid Source station SSID: bytes from '0' to 'F'
+ * @param to_addr Destination [character] address. Max 6 characters!
+ * @param to_ssid Destination station SSID: bytes '0' to 'F'
+ * @param relays Buffer with relays data. Eg "WIDE1 1" @warning If 2 or more items are to be given then write them WITHOUT commas etc. eg "WIDE1 1WIDE2 1"
+ * @param packet_content Buffer with APRS packet data
  * @return
  */
 QAPRSReturnCode QAPRSBase::send(char* from_addr, uint8_t from_ssid, char* to_addr, uint8_t to_ssid, char* relays, char* packet_content) {
@@ -318,14 +300,14 @@ QAPRSReturnCode QAPRSBase::send(char* from_addr, uint8_t from_ssid, char* to_add
 }
 
 /**
- * Wyslij dane APRS.
- * @param from_addr Adres [znak] ĹşrĂłdĹ‚owy. Max 6 znakĂłw!
- * @param from_ssid SSID stacji ĹşrĂłdĹ‚owej: bajty od '0' do 'F'
- * @param to_addr Adres [znak] docelowy. Max 6 znakĂłw!
- * @param to_ssid SSID stacji docelowej: bajty od '0' do 'F'
- * @param relays Bufor z danymi przekaĹşnikĂłw. Np. "WIDE1 1" @warning JeĹĽeli majÄ… byÄ‡ podane 2 lub wiÄ™cej pozycji to zapisujemy je BEZ przecinkĂłw itp. np. "WIDE1 1WIDE2 1"
- * @param packet_content Bufor z danymi pakietu APRS
- * @param length DĹ‚ugosÄ‡ packet_content
+* Send APRS details.
+ * @param from_addr Source [character] address. Max 6 characters!
+ * @param from_ssid Source station SSID: bytes from '0' to 'F'
+ * @param to_addr Destination [character] address. Max 6 characters!
+ * @param to_ssid Destination station SSID: bytes '0' to 'F'
+ * @param relays Buffer with relays data. Eg "WIDE1 1" @warning If 2 or more items are to be given then write them WITHOUT commas etc. eg "WIDE1 1WIDE2 1"
+ * @param packet_content Buffer with APRS packet data
+ * @param length The length of packet_content
  * @return
  */
 QAPRSReturnCode QAPRSBase::send(char* from_addr, uint8_t from_ssid, char* to_addr, uint8_t to_ssid, char* relays, char* packet_content, size_t length) {
@@ -360,29 +342,29 @@ QAPRSReturnCode QAPRSBase::send(char* from_addr, uint8_t from_ssid, char* to_add
 }
 
 /**
- * WysyĹ‚a dane APRS @warning Ta metoda zakoĹ„czy pracÄ™ na bajcie o wartosci 0 jesli wystÄ…pi.
- * @param buffer Bufor z czÄ™sciÄ… APRSowÄ… ramki - tzn. sam czyste dane APRS, bez SSIDĂłw itp.
- * @return Status operacji
+ * Sends APRS @warning data. This method will exit with a byte of 0 if present.
+ * @param buffer Buffer with the APRS part of the frame - i.e. only pure APRS data, no SSIDs, etc.
+ * @return Status of the operation
  */
 QAPRSReturnCode QAPRSBase::sendData(char* buffer) {
 	return this->send((char*)this->from_addr, this->from_ssid, (char*)this->to_addr, this->to_ssid, (char*)this->relays, buffer);
 }
 
 /**
- * WysyĹ‚a dane APRS
- * @param buffer Bufor z czÄ™sciÄ… APRSowÄ… ramki - tzn. sam czyste dane APRS, bez SSIDĂłw itp.
- * @param length DĹ‚ugosÄ‡ bufora
- * @return Status operacji
+ * Sends APRS data
+ * @param buffer Buffer with the APRS part of the frame - i.e. only pure APRS data, no SSIDs, etc.
+ * @param length The length of the buffer
+ * @return Status of the operation
  */
 QAPRSReturnCode QAPRSBase::sendData(char* buffer, size_t length) {
 	return this->send((char*)this->from_addr, this->from_ssid, (char*)this->to_addr, this->to_ssid, (char*)this->relays, buffer, length);
 }
 
 /**
- * Inicjalizacja biblioteki
- * @param sensePin Pin [we] Arduino na ktĂłrym 0 oznacza zgodÄ™ na nadwanie a 1 jej brak.
-			Podanie 0 jako numeru pinu powoduje WYĹ�ACZENIE wykrywania nadawania i zmusza programistÄ™ do samodzielnej jego obsĹ‚ugi!
- * @param txEnablePin Pin [wy] Arduino na ktĂłrym 1 oznacza nadawanie
+ * Library initialization
+ * @param sensePin Pin [we] Arduino on which 0 means consent to transmit and 1 means lack of it.
+ * Specifying 0 as the pin number turns broadcast detection OFF and forces the programmer to handle it himself!
+ * @param txEnablePin Pin [out] of the Arduino with 1 being transmit
  */
 void QAPRSBase::init(int8_t sensePin, int8_t txEnablePin) {
 	QAPRSGlobalObject = this;
@@ -396,15 +378,15 @@ void QAPRSBase::init(int8_t sensePin, int8_t txEnablePin) {
 }
 
 /**
- * Zainicjuj bibliotekÄ™ na potrzeby metody sendData @see QAPRSBase::sendData
- * @param sensePin sensePin Pin [we] Arduino na ktĂłrym 0 oznacza zgodÄ™ na nadwanie a 1 jej brak.
-			Podanie 0 jako numeru pinu powoduje WYĹ�ACZENIE wykrywania nadawania i zmusza programistÄ™ do samodzielnej jego obsĹ‚ugi!
- * @param txEnablePin Pin [wy] Arduino na ktĂłrym 1 oznacza nadawanie
- * @param from_addr Adres [znak] ĹşrĂłdĹ‚owy. Max 6 znakĂłw!
- * @param from_ssid SSID stacji ĹşrĂłdĹ‚owej: bajty od '0' do 'F'
- * @param to_addr Adres [znak] docelowy. Max 6 znakĂłw!
- * @param to_ssid SSID stacji docelowej: bajty od '0' do 'F'
- * @param relays ĹšcieĹĽki (relaye) np. "WIDE1-1,WIDE2-1". max 3 czĹ‚ony oddzielone przecinkami!
+* Initialize the library for the sendData @see method QAPRSBase :: sendData
+ * @param sensePin sensePin Pin [we] Arduino on which 0 means consent to send and 1 means lack of it.
+ * Specifying 0 as the pin number turns broadcast detection OFF and forces the programmer to handle it himself!
+ * @param txEnablePin Pin [out] of the Arduino with 1 being transmit
+ * @param from_addr Source [character] address. Max 6 characters!
+ * @param from_ssid Source station SSID: bytes from '0' to 'F'
+ * @param to_addr Destination [character] address. Max 6 characters!
+ * @param to_ssid Destination station SSID: bytes '0' to 'F'
+ * @param relays Relays eg "WIDE1-1, WIDE2-1". max. 3 elements, separated by commas!
  */
 void QAPRSBase::init(int8_t sensePin, int8_t txEnablePin, char* from_addr, uint8_t from_ssid, char* to_addr, uint8_t to_ssid, char* relays) {
 	this->init(sensePin, txEnablePin);
@@ -414,9 +396,9 @@ void QAPRSBase::init(int8_t sensePin, int8_t txEnablePin, char* from_addr, uint8
 }
 
 /**
- * Ustaw adres docelowy na potrzeby metody sendData
- * @param from_addr Adres [znak] ĹşrĂłdĹ‚owy. Max 6 znakĂłw!
- * @param from_ssid SSID stacji ĹşrĂłdĹ‚owej: bajty od '0' do 'F'
+ * Set the destination address for the sendData method
+ * @param from_addr Source [character] address. Max 6 characters!
+ * @param from_ssid Source station SSID: bytes from '0' to 'F'
  */
 void QAPRSBase::setFromAddress(char* from_addr, uint8_t from_ssid) {
 	memset(this->from_addr, ' ',6);
@@ -425,9 +407,9 @@ void QAPRSBase::setFromAddress(char* from_addr, uint8_t from_ssid) {
 }
 
 /**
- * Ustaw adres docelowy na potrzeby metody sendData
- * @param to_addr Adres [znak] docelowy. Max 6 znakĂłw!
- * @param to_ssid SSID stacji docelowej: bajty od '0' do 'F'
+ * Set the destination address for the sendData method
+ * @param to_addr Destination [character] address. Max 6 characters!
+ * @param to_ssid Destination station SSID: bytes '0' to 'F'
  */
 void QAPRSBase::setToAddress(char* to_addr, uint8_t to_ssid) {
 	memset(this->to_addr, ' ', 6);
@@ -436,8 +418,8 @@ void QAPRSBase::setToAddress(char* to_addr, uint8_t to_ssid) {
 }
 
 /**
- * PrzetwĂłrz zapis scieĹĽek (relayĂłw) z formatu ludzkiego na format do ramki ax.25
- * @param relays np. "WIDE1-1,WIDE2-1". max 3 czĹ‚ony oddzielone przecinkami! @see http://www.aprs.pl/sciezka.htm
+ * Convert track records (relays) from human format to ax.25 format
+ * @param relays eg "WIDE1-1, WIDE2-1". max. 3 elements, separated by commas! @see http://www.aprs.pl/sciezka.htm
  * @param dst
  */
 void QAPRSBase::parseRelays(const char* relays, char* dst) {
@@ -449,7 +431,7 @@ void QAPRSBase::parseRelays(const char* relays, char* dst) {
 	for(relays_ptr=0;relays_ptr<relays_len;relays_ptr++){
 		if (relays[relays_ptr] == ',' || relays_ptr == relays_len-1){
 			if (relays[relays_ptr] != ','){
-				dst[dst_ptr] = relays[relays_ptr] == '-' ? ' ' :  relays[relays_ptr]; // zamiana ',' na ' '
+				dst[dst_ptr] = relays[relays_ptr] == '-' ? ' ' :  relays[relays_ptr]; // exchange ',' for ' '
 				dst_ptr++;
 			}
 			// koniec elementu
@@ -466,7 +448,7 @@ void QAPRSBase::parseRelays(const char* relays, char* dst) {
 				dst_ptr++;
 			}
 		} else {
-			dst[dst_ptr] = relays[relays_ptr] == '-' ? ' ' :  relays[relays_ptr]; // zamiana ',' na ' '
+			dst[dst_ptr] = relays[relays_ptr] == '-' ? ' ' :  relays[relays_ptr]; // exchange ',' for ' '
 			dst_ptr++;
 		}
 	}
@@ -474,7 +456,7 @@ void QAPRSBase::parseRelays(const char* relays, char* dst) {
 }
 
 /**
- * Realizuje opĂłĹşnienie jeĹĽeli zostaĹ‚o ustawione
+ * Implements a delay, if set
  */
 void QAPRSBase::doTxDelay() {
 	if (this->txDelay){
@@ -501,7 +483,7 @@ void QAPRSBase::setVariant(QAPRSVariant variant) {
 }
 
 /**
- * Ustaw scieĹĽki (relaye) na potrzeby metody sendData @see QAPRSBase::sendData
+ * Set relay paths for send Data @see QAPRS Base :: send Data 
  * @param relays
  */
 void QAPRSBase::setRelays(char* relays) {
@@ -510,7 +492,7 @@ void QAPRSBase::setRelays(char* relays) {
 
 
 /**
- * Funkcja opĂłĹşniajÄ…ca. W odrĂłĹĽnieniu do delayMicroseconds z Arduino ta funkcja sprawdza prawdziwy czas.
+ * Delay function. Unlike delayMicroseconds with Arduino, this function checks the real time.
  * @param us
  */
 void QAPRSBase::delayuSeconds(uint16_t us) {
@@ -526,8 +508,8 @@ void QAPRSBase::delayuSeconds(uint16_t us) {
 
 
 /**
- * Ustaw czas zwĹ‚oki pomiÄ™dzy wĹ‚Ä…czeniem nadawania a rozpoczÄ™ciem generowania sygnaĹ‚u
- * @param txDelay Czas w ms
+ * Set a delay time between transmitting and starting the signal generation
+ * @param txDelay Time in ms
  */
 void QAPRSBase::setTxDelay(uint16_t txDelay) {
 	this->txDelay = txDelay;
@@ -554,7 +536,7 @@ void QAPRSBase::togglePin() {
 }
 
 #if defined(__arm__)
-//TODO: przepisaÄ‡ na STM32
+//TODO: rewrite to STM32
 #else
 ISR (TIMER1_OVF_vect)  // timer1 overflow interrupt
 {

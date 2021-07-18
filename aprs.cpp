@@ -28,19 +28,18 @@ uint8_t aprs_is_active() {
   return qaprs.enabled;
 }
 
-void calcDMH(long x, int8_t* degrees, uint8_t* minutes, uint8_t* h_minutes) {
-  uint8_t sign = (uint8_t) (x > 0 ? 1 : 0);
-  if (!sign) {
+void calcDMH(long x, bool* negsign, uint8_t* degrees, uint8_t* minutes, uint8_t* h_minutes) {
+  *negsign = (bool) (x > 0 ? 0 : 1);
+  if (*negsign == 1) {
     x = -(x);
   }
-  *degrees = (int8_t) (x / 1000000);
+ 
+  *degrees = (uint8_t) (x / 1000000);
   x = x - (*degrees * 1000000);
   x = (x) * 60 / 10000;
   *minutes = (uint8_t) (x / 100);
   *h_minutes = (uint8_t) (x - (*minutes * 100));
-  if (!sign) {
-    *degrees = -*degrees;
-  }
+
 }
 
 void aprs_send_status_ok(){
@@ -62,11 +61,12 @@ void aprs_send_position(GPSEntry gpsData) {
   char altitude[10];
   char sats[7];
   char csespd[8];
-  int8_t la_degrees, lo_degrees;
+  bool la_sign, lo_sign;
+  uint8_t la_degrees, lo_degrees;
   uint8_t la_minutes, la_h_minutes, lo_minutes, lo_h_minutes;
 
-  calcDMH(gpsData.lat_raw/10, &la_degrees, &la_minutes, &la_h_minutes);
-  calcDMH(gpsData.lon_raw/10, &lo_degrees, &lo_minutes, &lo_h_minutes);
+  calcDMH(gpsData.lat_raw/10, &la_sign, &la_degrees, &la_minutes, &la_h_minutes);
+  calcDMH(gpsData.lon_raw/10, &lo_sign, &lo_degrees, &lo_minutes, &lo_h_minutes);
 
   // proportional pathing
   if(APRS_PROPORTIONAL_PATH == 1){
@@ -102,16 +102,16 @@ void aprs_send_position(GPSEntry gpsData) {
 
   	  if(APRS_USE_TACTICAL_CALLSIGN == 0){
 	  sprintf(packet_buffer,
-          ("!%02d%02d.%02u%c%s%03d%02u.%02u%c%s%s%s%s%s"),
-		  abs(la_degrees),
+          ("!%02d%02d.%02u%c%s%03u%02u.%02u%c%s%s%s%s%s"),
+		  la_degrees,
 		  la_minutes,
 		  la_h_minutes,
-          la_degrees > 0 ? 'N' : 'S',
+          la_sign == 0 ? 'N' : 'S',
           APRS_TABL,
-          abs(lo_degrees),
+          lo_degrees,
           lo_minutes,
           lo_h_minutes,
-          lo_degrees > 0 ? 'E' : 'W',
+          lo_sign == 0 ? 'E' : 'W',
           APRS_ICON,
           csespd,
           altitude,
@@ -119,17 +119,17 @@ void aprs_send_position(GPSEntry gpsData) {
           sats);
   	  }else{
   		  sprintf(packet_buffer,
-  	          (")%s!%02d%02d.%02u%c%s%03d%02u.%02u%c%s%s%s%s%s"),
+  	          (")%s!%02u%02u.%02u%c%s%03u%02u.%02u%c%s%s%s%s%s"),
   	          APRS_TACTICAL_CALLSIGN,
-  			  abs(la_degrees),
+  			  la_degrees,
   			  la_minutes,
   			  la_h_minutes,
-  	          la_degrees > 0 ? 'N' : 'S',
+  	          la_sign == 0 ? 'N' : 'S',
   	          APRS_TACTICAL_TBL,
-  	          abs(lo_degrees),
+  	          lo_degrees,
   	          lo_minutes,
   	          lo_h_minutes,
-  	          lo_degrees > 0 ? 'E' : 'W',
+  	          lo_sign == 0 ? 'E' : 'W',
   	          APRS_TACTICAL_ICON,
   	          csespd,
   	          altitude,
